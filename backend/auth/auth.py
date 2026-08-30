@@ -7,7 +7,7 @@ from fastapi_clerk_auth import (
     HTTPAuthorizationCredentials,
 )
 
-from .utils import get_env_var
+from ..utils import get_env_var
 
 clerk_jwks_url = get_env_var("CLERK_JWKS_URL")
 clerk_config = ClerkConfig(

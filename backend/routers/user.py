@@ -2,9 +2,9 @@ from fastapi import APIRouter, HTTPException
 from sqlalchemy import select
 from starlette import status
 
-from ..clerk_auth import clerk_auth_dependency
-from ..database import db_dependency
-from ..models import User
+from ..auth.auth import clerk_auth_dependency
+from ..db.database import db_dependency
+from ..db.models import User
 
 router = APIRouter(prefix="/user", tags=["user"])
 
