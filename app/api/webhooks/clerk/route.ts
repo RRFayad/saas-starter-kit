@@ -28,7 +28,7 @@ const handleUserCreated = async (user: UserJSON) => {
     });
 };
 
-async function handleUserUpdated(user: UserJSON) {
+const handleUserUpdated = async (user: UserJSON) => {
   const primaryEmail = user.email_addresses.find(
     (email) => email.id === user.primary_email_address_id,
   );
@@ -47,16 +47,16 @@ async function handleUserUpdated(user: UserJSON) {
       updatedAt: new Date(),
     })
     .where(eq(users.clerkId, user.id));
-}
+};
 
-async function handleUserDeleted(user: DeletedObjectJSON) {
+const handleUserDeleted = async (user: DeletedObjectJSON) => {
   if (!user.id) {
     throw new Error("Deleted user ID not found");
   }
   await db.delete(users).where(eq(users.clerkId, user.id));
-}
+};
 
-export async function POST(req: NextRequest) {
+export const POST = async (req: NextRequest) => {
   try {
     const evt = await verifyWebhook(req);
 
@@ -80,4 +80,4 @@ export async function POST(req: NextRequest) {
 
     return new Response("Invalid webhook", { status: 400 });
   }
-}
+};
