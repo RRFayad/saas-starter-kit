@@ -7,6 +7,8 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 
+import { SubscriptionPlan } from "@/types/database";
+
 export const userRole = pgEnum("user_role", ["user", "admin"]);
 
 export const users = pgTable("users", {
@@ -20,13 +22,10 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export type User = typeof users.$inferSelect;
-export type NewUser = typeof users.$inferInsert;
-
 export const subscriptionPlan = pgEnum("subscription_plan", [
-  "basic",
-  "premium",
-  "all_in",
+  SubscriptionPlan.Basic,
+  SubscriptionPlan.Premium,
+  SubscriptionPlan.AllIn,
 ]);
 
 export const subscriptions = pgTable("subscriptions", {

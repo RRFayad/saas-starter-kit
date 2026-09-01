@@ -1,4 +1,7 @@
 import Stripe from "stripe";
+import type { User } from "@/types/database";
+import { getErrorMessageAndThrow } from "../utils";
+import { addStripeCustomerIdToUserDb } from "../user/user";
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
@@ -8,17 +11,41 @@ if (!stripeSecretKey) {
 
 export const stripe = new Stripe(stripeSecretKey);
 
-export const getStripeCheckoutSession = async ({
+export const createStripeCustomer = async (user: User) => {
+  const stripeCustomer = await stripe.customers.create({
+    email: user.email,
+  });
+
+  return stripeCustomer;
+};
+
+export const createStripeCheckoutSession = async ({
   priceId,
-  domainUrlToBeRedirected,
-  customerId,
+  user,
   successUrl,
+  cancelUrl,
 }: {
   priceId: string;
-  domainUrlToBeRedirected: string;
-  customerId: string;
-  successUrl?: string;
+  user: User;
+  successUrl: string;
+  cancelUrl?: string;
 }) => {
+  let updatedUser;
+
+  if (!user.stripeCustomerId) {
+    try {
+      const customer = await createStripeCustomer(user);
+      updatedUser = await addStripeCustomerIdToUserDb(user, customer.id);
+    } catch (error) {
+      getErrorMessageAndThrow(
+        "Failed to add Stripe Customer to create checkout",
+        error,
+      );
+    }
+  }
+
+  const customerId = (user.stripeCustomerId || updatedUser?.stripeCustomerId)!;
+
   const session = await stripe.checkout.sessions.create({
     customer: customerId,
     mode: "subscription",
@@ -31,9 +58,13 @@ export const getStripeCheckoutSession = async ({
       },
     ],
     customer_update: { name: "auto", address: "auto" },
-    success_url: successUrl || `${domainUrlToBeRedirected}/payment/success`,
-    cancel_url: `${domainUrlToBeRedirected}/payment/cancelled`,
+    success_url: successUrl,
+    cancel_url: cancelUrl || `/`,
   });
 
-  return session.url as string;
+  if (!session.url) {
+    throw new Error("Stripe checkout session URL is missing");
+  }
+
+  return session.url;
 };

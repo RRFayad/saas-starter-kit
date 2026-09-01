@@ -2,7 +2,7 @@
 
 import { UserButton } from "@clerk/nextjs";
 
-import type { User } from "@/types/user";
+import type { User } from "@/types/database";
 
 type DashboardProps = {
   user: User;

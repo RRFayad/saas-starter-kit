@@ -1,6 +1,6 @@
 "use server";
 
-import type { User } from "@/types/user";
+import type { User } from "@/types/database";
 import { getAuthenticatedBackendClient } from "./client";
 
 export const getCurrentUser = async (): Promise<User> => {
