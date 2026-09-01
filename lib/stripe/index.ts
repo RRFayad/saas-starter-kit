@@ -1,3 +1,5 @@
+import "server-only";
+
 import Stripe from "stripe";
 import type { User } from "@/types/database";
 import { getErrorMessageAndThrow } from "../utils";
@@ -12,10 +14,18 @@ if (!stripeSecretKey) {
 export const stripe = new Stripe(stripeSecretKey);
 
 export const createStripeCustomer = async (user: User) => {
-  const stripeCustomer = await stripe.customers.create({
-    email: user.email,
-  });
-
+  const stripeCustomer = await stripe.customers.create(
+    {
+      email: user.email,
+      metadata: {
+        userId: user.id.toString(),
+        clerkId: user.clerkId,
+      },
+    },
+    {
+      idempotencyKey: `customer-${user.id}`,
+    },
+  );
   return stripeCustomer;
 };
 
