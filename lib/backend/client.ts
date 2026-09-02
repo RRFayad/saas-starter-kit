@@ -3,11 +3,9 @@
 import { auth } from "@clerk/nextjs/server";
 import axios from "axios";
 
-const backendUrl = process.env.BACKEND_URL;
+import { getEnvVar } from "@/lib/utils";
 
-if (!backendUrl) {
-  throw new Error("BACKEND_URL environment variable is not set");
-}
+const backendUrl = getEnvVar("BACKEND_URL");
 
 export const backendClient = axios.create({
   baseURL: backendUrl,

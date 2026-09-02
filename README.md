@@ -258,12 +258,11 @@ The application connects to PostgreSQL using `postgres.js` and Drizzle:
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema";
+import { getEnvVar } from "@/lib/utils";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL environment variable is not set");
-}
+const databaseUrl = getEnvVar("DATABASE_URL");
 
-export const client = postgres(process.env.DATABASE_URL);
+export const client = postgres(databaseUrl);
 
 export const db = drizzle(client, {
   schema,
@@ -325,6 +324,7 @@ Therefore, `drizzle.config.ts` explicitly loads `.env.local`:
 ```ts
 import type { Config } from "drizzle-kit";
 import dotenv from "dotenv";
+import { getEnvVar } from "./lib/utils";
 
 dotenv.config({ path: ".env.local" });
 
@@ -334,7 +334,7 @@ export default {
   dialect: "postgresql",
 
   dbCredentials: {
-    url: process.env.DATABASE_URL!,
+    url: getEnvVar("DATABASE_URL"),
   },
 } satisfies Config;
 ```

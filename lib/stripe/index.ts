@@ -2,14 +2,10 @@ import "server-only";
 
 import Stripe from "stripe";
 import type { User } from "@/types/database";
-import { getErrorMessageAndThrow } from "../utils";
+import { getEnvVar, getErrorMessageAndThrow } from "../utils";
 import { addStripeCustomerIdToUserDb } from "../user/user";
 
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-
-if (!stripeSecretKey) {
-  throw new Error("STRIPE_SECRET_KEY environment variable is not set");
-}
+const stripeSecretKey = getEnvVar("STRIPE_SECRET_KEY");
 
 export const stripe = new Stripe(stripeSecretKey);
 

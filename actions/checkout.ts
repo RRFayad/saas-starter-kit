@@ -7,6 +7,7 @@ import { stripePriceIds } from "@/lib/constants";
 import { subscriptionPlan } from "@/lib/db/schema";
 import { createStripeCheckoutSession } from "@/lib/stripe";
 import { getUserByClerkId } from "@/lib/user/user";
+import { getEnvVar } from "@/lib/utils";
 import type { SubscriptionPlan } from "@/types/database";
 
 const isSubscriptionPlan = (value: string): value is SubscriptionPlan => {
@@ -32,11 +33,7 @@ export const checkout = async (formData: FormData) => {
     throw new Error("Application user not found");
   }
 
-  const frontendUrl = process.env.FRONTEND_URL;
-
-  if (!frontendUrl) {
-    throw new Error("FRONTEND_URL environment variable is not set");
-  }
+  const frontendUrl = getEnvVar("FRONTEND_URL");
 
   const priceId = stripePriceIds[plan];
 
