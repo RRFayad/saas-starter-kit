@@ -29,6 +29,13 @@
       "when": 1788133681888,
       "tag": "0003_yielding_cobalt_man",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788394190818,
+      "tag": "0004_add_stripe_event_fields",
+      "breakpoints": true
     }
   ]
 }
