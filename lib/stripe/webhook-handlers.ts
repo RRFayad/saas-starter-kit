@@ -94,6 +94,9 @@ export const handleSubscriptionUpsert = async (
         updatedAt: new Date(),
       },
       // Stripe can deliver webhooks out of order. Keep the newest event state.
-      setWhere: sql`${subscriptions.stripeEventCreatedAt} <= ${eventCreatedAt}`,
+      setWhere: sql`${subscriptions.stripeEventCreatedAt} <= ${sql.param(
+        eventCreatedAt,
+        subscriptions.stripeEventCreatedAt,
+      )}`,
     });
 };
