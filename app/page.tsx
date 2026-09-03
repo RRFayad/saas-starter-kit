@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { checkout } from "@/actions/checkout";
+import { checkout, customerPortal } from "@/actions/stripe";
 import { stripePriceIds } from "@/lib/constants";
 import type { SubscriptionPlan } from "@/types/database";
 import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
@@ -29,6 +29,9 @@ const Home = () => {
             <Button type="submit">Subscribe to {plan}</Button>
           </form>
         ))}
+        <form action={customerPortal}>
+          <Button type="submit">Manage billing</Button>
+        </form>
       </Show>
     </main>
   );

@@ -5,7 +5,10 @@ import { redirect } from "next/navigation";
 
 import { stripePriceIds } from "@/lib/constants";
 import { subscriptionPlan } from "@/lib/db/schema";
-import { createStripeCheckoutSession } from "@/lib/stripe";
+import {
+  createStripeCheckoutSession,
+  createStripeCustomerPortalSession,
+} from "@/lib/stripe";
 import { getUserByClerkId } from "@/lib/user/user";
 import { getEnvVar } from "@/lib/utils";
 import type { SubscriptionPlan } from "@/types/database";
@@ -34,7 +37,6 @@ export const checkout = async (formData: FormData) => {
   }
 
   const frontendUrl = getEnvVar("FRONTEND_URL");
-
   const priceId = stripePriceIds[plan];
 
   if (!priceId) {
@@ -42,11 +44,37 @@ export const checkout = async (formData: FormData) => {
   }
 
   const checkoutUrl = await createStripeCheckoutSession({
-    priceId: priceId,
+    priceId,
     user,
     successUrl: `${frontendUrl}/payment/success`,
     cancelUrl: `${frontendUrl}/payment/cancelled`,
   });
 
   redirect(checkoutUrl);
+};
+
+export const customerPortal = async () => {
+  const { userId: clerkUserId } = await auth();
+
+  if (!clerkUserId) {
+    throw new Error("Unauthorized");
+  }
+
+  const user = await getUserByClerkId(clerkUserId);
+
+  if (!user) {
+    throw new Error("Application user not found");
+  }
+
+  if (!user.stripeCustomerId) {
+    throw new Error("Stripe customer not found");
+  }
+
+  const frontendUrl = getEnvVar("FRONTEND_URL");
+  const portalUrl = await createStripeCustomerPortalSession({
+    customerId: user.stripeCustomerId,
+    returnUrl: `${frontendUrl}/product`,
+  });
+
+  redirect(portalUrl);
 };

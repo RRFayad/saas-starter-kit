@@ -74,3 +74,22 @@ export const createStripeCheckoutSession = async ({
 
   return session.url;
 };
+
+export const createStripeCustomerPortalSession = async ({
+  customerId,
+  returnUrl,
+}: {
+  customerId: string;
+  returnUrl: string;
+}) => {
+  const session = await stripe.billingPortal.sessions.create({
+    customer: customerId,
+    return_url: returnUrl,
+  });
+
+  if (!session.url) {
+    throw new Error("Stripe customer portal session URL is missing");
+  }
+
+  return session.url;
+};
