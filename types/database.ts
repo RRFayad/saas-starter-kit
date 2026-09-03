@@ -1,7 +1,9 @@
-import type { users } from "@/lib/db/schema";
+import type { subscriptions, users } from "@/lib/db/schema";
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+
+export type Subscription = typeof subscriptions.$inferSelect;
 
 export enum SubscriptionPlan {
   Basic = "basic",

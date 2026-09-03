@@ -73,7 +73,7 @@ export const customerPortal = async () => {
   const frontendUrl = getEnvVar("FRONTEND_URL");
   const portalUrl = await createStripeCustomerPortalSession({
     customerId: user.stripeCustomerId,
-    returnUrl: `${frontendUrl}/product`,
+    returnUrl: `${frontendUrl}/dashboard`,
   });
 
   redirect(portalUrl);

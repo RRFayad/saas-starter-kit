@@ -16,8 +16,8 @@ const Home = () => {
   return (
     <main>
       <Show when="signed-out">
-        <SignInButton forceRedirectUrl={"/product"} />
-        <SignUpButton forceRedirectUrl={"/product"} />
+        <SignInButton forceRedirectUrl={"/dashboard"} />
+        <SignUpButton forceRedirectUrl={"/dashboard"} />
       </Show>
 
       <Show when="signed-in">

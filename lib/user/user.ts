@@ -1,9 +1,9 @@
 import "server-only";
 
-import { eq } from "drizzle-orm";
-
 import { db } from "@/lib/db";
+import { eq } from "drizzle-orm";
 import { users } from "@/lib/db/schema";
+import { auth } from "@clerk/nextjs/server";
 import type { User } from "@/types/database";
 
 export const getUserByClerkId = async (
@@ -27,4 +27,14 @@ export const addStripeCustomerIdToUserDb = async (
     .returning();
 
   return updatedUser;
+};
+
+export const getCurrentUser = async (): Promise<User | null> => {
+  const { userId: clerkId } = await auth();
+
+  if (!clerkId) {
+    return null;
+  }
+
+  return getUserByClerkId(clerkId);
 };

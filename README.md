@@ -135,7 +135,7 @@ Clerk
    ↓
 Authenticated Session
    ↓
-Protected Product
+Subscribed Dashboard
 ```
 
 Client-side authentication state can be rendered using Clerk's `<Show>` component:
@@ -147,8 +147,8 @@ export default function Home() {
   return (
     <main>
       <Show when="signed-out">
-        <SignInButton forceRedirectUrl="/product" />
-        <SignUpButton forceRedirectUrl="/product" />
+        <SignInButton forceRedirectUrl="/dashboard" />
+        <SignUpButton forceRedirectUrl="/dashboard" />
       </Show>
 
       <Show when="signed-in">
@@ -173,14 +173,14 @@ Example:
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-export default async function ProductPage() {
+export default async function DashboardPage() {
   const { userId } = await auth();
 
   if (!userId) {
     redirect("/");
   }
 
-  return <h1>Product</h1>;
+  return <h1>Dashboard</h1>;
 }
 ```
 
