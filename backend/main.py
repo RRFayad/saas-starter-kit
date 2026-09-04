@@ -1,7 +1,9 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .routers import user
+from .auth.subscription import require_subscription_plan
+from .db.models import SubscriptionPlan
+from .routers import dashboard
 from .utils import get_env_var
 
 frontend_url = get_env_var("FRONTEND_URL")
@@ -17,14 +19,12 @@ app.add_middleware(
 )
 
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
-
-
 @app.get("/healthy")
 def health_check():
     return {"status": "Healthy"}
 
 
-app.include_router(user.router)
+app.include_router(
+    dashboard.router,
+    dependencies=[Depends(require_subscription_plan(SubscriptionPlan.BASIC))],
+)
