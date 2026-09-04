@@ -223,7 +223,7 @@ DATABASE_URL=postgresql://...
 Database-related files are located under:
 
 ```text
-lib/db/
+src/lib/db/
 ├── index.ts
 ├── schema.ts
 └── migrations/
@@ -291,7 +291,7 @@ Drizzle Kit manages database migrations.
 
 ## Generate a Migration
 
-After modifying `lib/db/schema.ts`:
+After modifying `src/lib/db/schema.ts`:
 
 ```bash
 npx drizzle-kit generate
@@ -324,13 +324,13 @@ Therefore, `drizzle.config.ts` explicitly loads `.env.local`:
 ```ts
 import type { Config } from "drizzle-kit";
 import dotenv from "dotenv";
-import { getEnvVar } from "./lib/utils";
+import { getEnvVar } from "./src/lib/utils";
 
 dotenv.config({ path: ".env.local" });
 
 export default {
-  schema: "./lib/db/schema.ts",
-  out: "./lib/db/migrations",
+  schema: "./src/lib/db/schema.ts",
+  out: "./src/lib/db/migrations",
   dialect: "postgresql",
 
   dbCredentials: {
@@ -356,7 +356,7 @@ Database migrations should be committed to Git.
 For example:
 
 ```text
-lib/db/migrations/
+src/lib/db/migrations/
 ├── 0000_initial_schema.sql
 ├── meta/
 └── ...
@@ -413,7 +413,7 @@ POST /api/webhooks/clerk
 and is implemented at:
 
 ```text
-app/api/webhooks/clerk/route.ts
+src/app/api/webhooks/clerk/route.ts
 ```
 
 The starter listens for:
