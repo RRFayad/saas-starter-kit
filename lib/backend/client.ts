@@ -26,3 +26,22 @@ export const getAuthenticatedBackendClient = async () => {
     },
   });
 };
+
+export const fetchBackendData = async <T>(
+  endpoint: string,
+  logMessage = `Failed to fetch backend endpoint: ${endpoint}`,
+): Promise<T | null> => {
+  try {
+    const backendClient = await getAuthenticatedBackendClient();
+    const response = await backendClient.get<T>(endpoint);
+
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error(logMessage, error.message);
+      return null;
+    }
+
+    throw error;
+  }
+};
