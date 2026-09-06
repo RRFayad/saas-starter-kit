@@ -1,4 +1,5 @@
 import type { SubscriptionPlan } from "@/types/database";
+
 import { getEnvVar } from "@/lib/utils";
 
 export const stripePriceIds = {
@@ -6,9 +7,3 @@ export const stripePriceIds = {
   premium: getEnvVar("STRIPE_PREMIUM_PRICE_ID", false),
   all_in: getEnvVar("STRIPE_ALL_IN_PRICE_ID", false),
 } satisfies Record<SubscriptionPlan, string | null>;
-
-export const subscriptionPlanLevel: Record<SubscriptionPlan, number> = {
-  basic: 1,
-  premium: 2,
-  all_in: 3,
-};

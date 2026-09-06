@@ -3,7 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-import { stripePriceIds } from "@/lib/constants";
+import { stripePriceIds } from "@/lib/stripe/config";
 import { subscriptionPlan } from "@/lib/db/schema";
 import {
   createStripeCheckoutSession,

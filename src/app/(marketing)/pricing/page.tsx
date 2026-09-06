@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { checkout, customerPortal } from "@/actions/stripe";
-import { stripePriceIds } from "@/lib/constants";
+import { stripePriceIds } from "@/lib/stripe/config";
 import type { SubscriptionPlan } from "@/types/database";
 import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 

@@ -3,7 +3,7 @@ import "server-only";
 import type Stripe from "stripe";
 import { eq, sql } from "drizzle-orm";
 
-import { stripePriceIds } from "@/lib/constants";
+import { stripePriceIds } from "@/lib/stripe/config";
 import { db } from "@/lib/db";
 import { subscriptions, users } from "@/lib/db/schema";
 import type { SubscriptionPlan } from "@/types/database";

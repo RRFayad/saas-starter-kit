@@ -5,7 +5,12 @@ import { eq } from "drizzle-orm";
 import { subscriptions } from "@/lib/db/schema";
 import { Subscription, SubscriptionPlan } from "@/types/database";
 import { getCurrentUser } from "../user/user";
-import { subscriptionPlanLevel } from "../constants";
+
+const subscriptionPlanLevel: Record<SubscriptionPlan, number> = {
+  basic: 1,
+  premium: 2,
+  all_in: 3,
+};
 
 export const getSubscriptionByUserId = async (
   userId: number,
