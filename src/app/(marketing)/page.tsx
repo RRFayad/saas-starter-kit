@@ -16,11 +16,11 @@ import {
 } from "@/components/ui/accordion";
 import { HeroMockup } from "@/components/marketing/hero-mockup";
 import { IntegrationsBeam } from "@/components/marketing/integrations-beam";
+import { PricingCards } from "@/components/marketing/pricing-cards";
 import { AnimatedGradientText } from "@/components/velora/animated-gradient-text";
 import { AuroraBackground } from "@/components/velora/aurora-background";
 import { AvatarCircles } from "@/components/velora/avatar-circles";
 import { BlurFade } from "@/components/velora/blur-fade";
-import { BorderBeam } from "@/components/velora/border-beam";
 import { GridPattern } from "@/components/velora/grid-pattern";
 import { NumberTicker } from "@/components/velora/number-ticker";
 import { Particles } from "@/components/velora/particles";
@@ -30,6 +30,7 @@ import { SpotlightCard } from "@/components/velora/spotlight-card";
 import { TextReveal } from "@/components/velora/text-reveal";
 import { TiltCard } from "@/components/velora/tilt-card";
 import { Typewriter } from "@/components/velora/typewriter";
+import { getAvailableStripePlans } from "@/lib/stripe/config";
 
 const stats = [
   { value: 8, suffix: "h", prefix: "", label: "saved with payments" },
@@ -94,21 +95,7 @@ const faqs = [
   },
 ];
 
-const freeFeatures = [
-  "32+ animated components",
-  "Complete SaaS landing template",
-  "Dark mode + full accessibility",
-  "MIT license — commercial use OK",
-  "Community support",
-];
-
-const proFeatures = [
-  "5 niche templates (AI, dev tool, mobile…)",
-  "50+ section design variants",
-  "Figma source file",
-  "Waitlist, newsletter & Stripe wiring",
-  "Private registry + lifetime updates",
-];
+const availablePlans = getAvailableStripePlans();
 
 const styles = {
   page: "relative",
@@ -177,24 +164,6 @@ const styles = {
     avatar: "[&>span]:size-8 [&>span]:text-[10px]",
     name: "text-sm font-medium",
     role: "text-xs text-muted-foreground",
-  },
-  pricing: {
-    grid: "mx-auto mt-16 grid max-w-4xl gap-6 md:grid-cols-2",
-    card: "flex h-full flex-col rounded-2xl border bg-card p-8",
-    proCard:
-      "relative flex h-full flex-col overflow-hidden rounded-2xl border bg-card p-8",
-    planHeader: "flex items-center justify-between",
-    planName: "text-lg font-semibold",
-    proPlanName: "text-lg font-semibold text-primary",
-    planBadge:
-      "rounded-full bg-primary/15 px-3 py-1 text-xs font-medium text-primary",
-    planDescription: "mt-2 text-sm text-muted-foreground",
-    price: "mt-6 text-5xl font-semibold tracking-tight",
-    pricePeriod: "text-base font-normal text-muted-foreground",
-    featureList: "mt-8 flex-1 space-y-3 text-sm",
-    featureItem: "flex items-center gap-3",
-    button: "mt-8 w-full rounded-full",
-    proButton: "mt-8 w-full",
   },
   faq: {
     section: "py-16 lg:py-24",
@@ -456,67 +425,7 @@ const LandingPage = () => {
             </p>
           </BlurFade>
 
-          <div className={styles.pricing.grid}>
-            <BlurFade>
-              <div className={styles.pricing.card}>
-                <h3 className={styles.pricing.planName}>Free</h3>
-                <p className={styles.pricing.planDescription}>
-                  Everything you see in this showcase.
-                </p>
-                <p className={styles.pricing.price}>
-                  $0
-                  <span className={styles.pricing.pricePeriod}> forever</span>
-                </p>
-                <ul className={styles.pricing.featureList}>
-                  {freeFeatures.map((f) => (
-                    <li key={f} className={styles.pricing.featureItem}>
-                      <span className={styles.featureCheck}>
-                        <CheckIcon className={styles.featureCheckIcon} />
-                      </span>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className={styles.pricing.button}
-                >
-                  Get started
-                </Button>
-              </div>
-            </BlurFade>
-
-            <BlurFade delay={0.12}>
-              <div className={styles.pricing.proCard}>
-                <BorderBeam size={80} duration={8} />
-                <div className={styles.pricing.planHeader}>
-                  <h3 className={styles.pricing.proPlanName}>Pro</h3>
-                  <span className={styles.pricing.planBadge}>Coming soon</span>
-                </div>
-                <p className={styles.pricing.planDescription}>
-                  For teams shipping more than one page.
-                </p>
-                <p className={styles.pricing.price}>
-                  $99
-                  <span className={styles.pricing.pricePeriod}> lifetime</span>
-                </p>
-                <ul className={styles.pricing.featureList}>
-                  {proFeatures.map((f) => (
-                    <li key={f} className={styles.pricing.featureItem}>
-                      <span className={styles.featureCheck}>
-                        <CheckIcon className={styles.featureCheckIcon} />
-                      </span>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <ShimmerButton className={styles.pricing.proButton}>
-                  Join the waitlist
-                </ShimmerButton>
-              </div>
-            </BlurFade>
-          </div>
+          <PricingCards plans={availablePlans} />
         </div>
       </section>
 
