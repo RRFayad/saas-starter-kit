@@ -38,61 +38,82 @@ const stats = [
 
 const bars = [38, 62, 48, 74, 56, 88, 66, 92, 60, 78, 84, 98];
 
+const styles = {
+  root: "relative mx-auto w-full max-w-5xl",
+  glow: "absolute -inset-8 rounded-[2rem] bg-gradient-to-r from-brand-from via-brand-via to-brand-to opacity-20 blur-3xl",
+  browser: "relative",
+  dashboard: "flex",
+  sidebar: "hidden w-44 flex-col gap-1 border-r border-border/60 p-3 md:flex",
+  sidebarItem: "flex items-center gap-2 rounded-lg px-3 py-2 text-xs",
+  sidebarItemActive: "bg-primary/10 font-medium text-primary",
+  sidebarItemInactive: "text-muted-foreground",
+  sidebarIcon: "size-3.5",
+  content: "flex-1 p-4 lg:p-6",
+  contentHeader: "mb-4 flex items-center justify-between",
+  contentTitle: "text-sm font-semibold",
+  period:
+    "rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground",
+  statsGrid: "grid grid-cols-3 gap-3",
+  statCard: "rounded-xl border border-border/60 bg-background/40 p-3 lg:p-4",
+  statLabel: "text-[11px] text-muted-foreground",
+  statValue: "mt-1 text-base font-semibold lg:text-xl",
+  statChange:
+    "mt-1 inline-flex items-center gap-1 text-[11px] text-emerald-500",
+  statChangeIcon: "size-3",
+  chart: "mt-3 rounded-xl border border-border/60 bg-background/40 p-4",
+  chartHeader: "mb-3 flex items-center justify-between",
+  chartTitle: "text-xs font-medium",
+  chartYear: "text-[11px] text-muted-foreground",
+  chartBars: "flex h-32 items-end gap-2 lg:h-40",
+  chartBar:
+    "flex-1 origin-bottom rounded-t-sm bg-gradient-to-t from-brand-from to-brand-via",
+};
+
 /**
  * Fake analytics dashboard inside a browser frame — pure markup,
  * no images. Gives the hero a product to look at.
  */
-export function HeroMockup({ className }: { className?: string }) {
+export const HeroMockup = ({ className }: { className?: string }) => {
   return (
-    <div className={cn("relative mx-auto w-full max-w-5xl", className)}>
+    <div className={cn(styles.root, className)}>
       {/* Glow */}
-      <div
-        aria-hidden
-        className="absolute -inset-8 rounded-[2rem] bg-gradient-to-r from-brand-from via-brand-via to-brand-to opacity-20 blur-3xl"
-      />
+      <div aria-hidden className={styles.glow} />
 
-      <BrowserMockup url="starter-kit/dashboard" className="relative">
+      <BrowserMockup url="starter-kit/dashboard" className={styles.browser}>
         <BorderBeam size={96} duration={10} />
 
-        <div className="flex">
+        <div className={styles.dashboard}>
           {/* Sidebar */}
-          <aside className="hidden w-44 flex-col gap-1 border-r border-border/60 p-3 md:flex">
+          <aside className={styles.sidebar}>
             {navItems.map((item) => (
               <span
                 key={item.label}
                 className={cn(
-                  "flex items-center gap-2 rounded-lg px-3 py-2 text-xs",
+                  styles.sidebarItem,
                   item.active
-                    ? "bg-primary/10 font-medium text-primary"
-                    : "text-muted-foreground",
+                    ? styles.sidebarItemActive
+                    : styles.sidebarItemInactive,
                 )}
               >
-                <item.icon className="size-3.5" />
+                <item.icon className={styles.sidebarIcon} />
                 {item.label}
               </span>
             ))}
           </aside>
 
           {/* Main */}
-          <div className="flex-1 p-4 lg:p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <span className="text-sm font-semibold">Overview</span>
-              <span className="rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">
-                Last 30 days
-              </span>
+          <div className={styles.content}>
+            <div className={styles.contentHeader}>
+              <span className={styles.contentTitle}>Overview</span>
+              <span className={styles.period}>Last 30 days</span>
             </div>
 
             {/* Stat cards */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className={styles.statsGrid}>
               {stats.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="rounded-xl border border-border/60 bg-background/40 p-3 lg:p-4"
-                >
-                  <p className="text-[11px] text-muted-foreground">
-                    {stat.label}
-                  </p>
-                  <p className="mt-1 text-base font-semibold lg:text-xl">
+                <div key={stat.label} className={styles.statCard}>
+                  <p className={styles.statLabel}>{stat.label}</p>
+                  <p className={styles.statValue}>
                     <NumberTicker
                       value={stat.value}
                       prefix={stat.prefix}
@@ -100,8 +121,8 @@ export function HeroMockup({ className }: { className?: string }) {
                       decimalPlaces={stat.decimals ?? 0}
                     />
                   </p>
-                  <span className="mt-1 inline-flex items-center gap-1 text-[11px] text-emerald-500">
-                    <TrendingUpIcon className="size-3" />
+                  <span className={styles.statChange}>
+                    <TrendingUpIcon className={styles.statChangeIcon} />
                     {stat.change}
                   </span>
                 </div>
@@ -109,12 +130,12 @@ export function HeroMockup({ className }: { className?: string }) {
             </div>
 
             {/* Bar chart */}
-            <div className="mt-3 rounded-xl border border-border/60 bg-background/40 p-4">
-              <div className="mb-3 flex items-center justify-between">
-                <span className="text-xs font-medium">Monthly revenue</span>
-                <span className="text-[11px] text-muted-foreground">2026</span>
+            <div className={styles.chart}>
+              <div className={styles.chartHeader}>
+                <span className={styles.chartTitle}>Monthly revenue</span>
+                <span className={styles.chartYear}>2026</span>
               </div>
-              <div className="flex h-32 items-end gap-2 lg:h-40">
+              <div className={styles.chartBars}>
                 {bars.map((height, i) => (
                   <motion.div
                     key={i}
@@ -126,7 +147,7 @@ export function HeroMockup({ className }: { className?: string }) {
                       duration: 0.5,
                       ease: [0.21, 0.47, 0.32, 0.98],
                     }}
-                    className="flex-1 origin-bottom rounded-t-sm bg-gradient-to-t from-brand-from to-brand-via"
+                    className={styles.chartBar}
                     style={{
                       height: `${height}%`,
                       opacity: 0.5 + height / 200,
@@ -140,4 +161,4 @@ export function HeroMockup({ className }: { className?: string }) {
       </BrowserMockup>
     </div>
   );
-}
+};

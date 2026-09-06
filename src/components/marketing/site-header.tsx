@@ -5,29 +5,35 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { siteConfig } from "@/lib/site-config";
 
-export function SiteHeader() {
+const styles = {
+  header:
+    "fixed inset-x-0 top-0 z-50 border-b border-border/40 bg-background/70 backdrop-blur-xl",
+  content:
+    "mx-auto flex h-16 max-w-6xl items-center justify-between px-4 lg:px-8",
+  brand: "flex items-center gap-2 font-semibold",
+  brandIcon: "size-5 text-primary",
+  navigation: "hidden items-center gap-6 text-sm text-muted-foreground md:flex",
+  navigationLink: "transition-colors hover:text-foreground",
+  actions: "flex items-center gap-2",
+};
+
+export const SiteHeader = () => {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-border/40 bg-background/70 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 lg:px-8">
-        <Link href="/" className="flex items-center gap-2 font-semibold">
-          <SparklesIcon className="size-5 text-primary" />
+    <header className={styles.header}>
+      <div className={styles.content}>
+        <Link href="/" className={styles.brand}>
+          <SparklesIcon className={styles.brandIcon} />
           Full-Stack SaaS Starter Kit
         </Link>
-        <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
-          <Link
-            href="/components"
-            className="transition-colors hover:text-foreground"
-          >
+        <nav className={styles.navigation}>
+          <Link href="/components" className={styles.navigationLink}>
             Sign In
           </Link>
-          <Link
-            href="/themes"
-            className="transition-colors hover:text-foreground"
-          >
+          <Link href="/themes" className={styles.navigationLink}>
             Sign Up
           </Link>
         </nav>
-        <div className="flex items-center gap-2">
+        <div className={styles.actions}>
           <ThemeToggle />
           {siteConfig.github && (
             <Button variant="outline" size="sm" asChild>
@@ -41,4 +47,4 @@ export function SiteHeader() {
       </div>
     </header>
   );
-}
+};

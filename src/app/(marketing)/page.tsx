@@ -110,28 +110,135 @@ const proFeatures = [
   "Private registry + lifetime updates",
 ];
 
+const styles = {
+  page: "relative",
+  section: "relative py-16 lg:py-24",
+  content: "mx-auto max-w-6xl px-4 lg:px-8",
+  sectionHeading:
+    "mx-auto max-w-2xl text-center text-3xl font-semibold tracking-tight text-balance lg:text-5xl",
+  sectionDescription: "mx-auto mt-4 max-w-xl text-center text-muted-foreground",
+  accent: "text-primary",
+  featureCheck:
+    "flex size-5 items-center justify-center rounded-full bg-primary/15 text-primary",
+  featureCheckIcon: "size-3",
+  hero: {
+    section: "relative overflow-hidden pt-40 pb-24 lg:pt-48 lg:pb-28",
+    gridPattern:
+      "fill-transparent stroke-border/60 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]",
+    content: "relative mx-auto max-w-6xl px-4 text-center lg:px-8",
+    badge:
+      "inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 px-4 py-1.5 text-sm backdrop-blur",
+    badgeIcon: "size-3.5 text-primary",
+    badgeText: "font-medium",
+    title:
+      "mx-auto mt-8 max-w-4xl text-5xl font-semibold tracking-tight text-balance lg:text-7xl",
+    description:
+      "mx-auto mt-6 max-w-2xl text-lg text-muted-foreground text-pretty",
+    actions: "mt-10 flex flex-wrap items-center justify-center gap-4",
+    actionIcon: "size-4",
+    socialProof:
+      "mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row",
+    socialProofContent: "flex flex-col items-center gap-0.5 sm:items-start",
+    socialProofStars: "flex gap-0.5 text-amber-400",
+    socialProofStar: "size-4 fill-current",
+    socialProofText: "text-sm text-muted-foreground",
+    mockup: "mt-20",
+    stats: "mx-auto mt-20 grid max-w-4xl grid-cols-2 gap-8 lg:grid-cols-4",
+    stat: "flex flex-col items-center gap-1",
+    statValue: "text-4xl font-semibold tracking-tight",
+    statLabel: "text-sm text-muted-foreground",
+  },
+  integrations: {
+    content:
+      "mx-auto grid max-w-6xl items-center gap-12 px-4 lg:grid-cols-2 lg:gap-20 lg:px-8",
+    eyebrow: "text-sm font-medium text-primary",
+    title:
+      "mt-3 text-3xl font-semibold tracking-tight text-balance lg:text-4xl",
+    description: "mt-4 text-muted-foreground",
+    list: "mt-6 space-y-3 text-sm",
+    listItem: "flex items-center gap-3",
+  },
+  cards: {
+    grid: "grid gap-6 md:grid-cols-3",
+    card: "h-full p-8",
+    icon: "size-6",
+    iconContainer: "mb-4 w-fit rounded-xl bg-primary/10 p-3 text-primary",
+    title: "text-lg font-semibold",
+    description: "mt-2 text-sm text-muted-foreground",
+  },
+  testimonials: {
+    grid: "mt-16 columns-1 gap-6 md:columns-2 lg:columns-3 [&>*]:mb-6",
+    item: "break-inside-avoid",
+    card: "rounded-2xl border bg-card p-6",
+    stars: "flex gap-0.5 text-amber-400",
+    star: "size-3.5 fill-current",
+    quote: "mt-4 text-sm text-card-foreground",
+    figcaption: "mt-4 flex items-center gap-3",
+    avatar: "[&>span]:size-8 [&>span]:text-[10px]",
+    name: "text-sm font-medium",
+    role: "text-xs text-muted-foreground",
+  },
+  pricing: {
+    grid: "mx-auto mt-16 grid max-w-4xl gap-6 md:grid-cols-2",
+    card: "flex h-full flex-col rounded-2xl border bg-card p-8",
+    proCard:
+      "relative flex h-full flex-col overflow-hidden rounded-2xl border bg-card p-8",
+    planHeader: "flex items-center justify-between",
+    planName: "text-lg font-semibold",
+    proPlanName: "text-lg font-semibold text-primary",
+    planBadge:
+      "rounded-full bg-primary/15 px-3 py-1 text-xs font-medium text-primary",
+    planDescription: "mt-2 text-sm text-muted-foreground",
+    price: "mt-6 text-5xl font-semibold tracking-tight",
+    pricePeriod: "text-base font-normal text-muted-foreground",
+    featureList: "mt-8 flex-1 space-y-3 text-sm",
+    featureItem: "flex items-center gap-3",
+    button: "mt-8 w-full rounded-full",
+    proButton: "mt-8 w-full",
+  },
+  faq: {
+    section: "py-16 lg:py-24",
+    container: "mx-auto max-w-3xl px-4 lg:px-8",
+    heading: "text-center text-3xl font-semibold tracking-tight lg:text-4xl",
+    accordion: "mt-12",
+    trigger: "text-left text-base",
+    answer: "text-muted-foreground",
+  },
+  callToAction: {
+    section: "relative overflow-hidden py-16 lg:py-24",
+    content: "relative mx-auto max-w-4xl px-4 text-center lg:px-8",
+    heading: "text-4xl font-semibold tracking-tight text-balance lg:text-6xl",
+    description: "mx-auto mt-6 max-w-xl text-lg text-muted-foreground",
+    action: "mt-10",
+    button: "h-14 px-10 text-base",
+    buttonIcon: "size-5",
+  },
+};
+
 const LandingPage = () => {
   return (
-    <main className="relative">
+    <main className={styles.page}>
       <ScrollProgress />
 
       {/* Hero */}
-      <section className="relative overflow-hidden pt-40 pb-24 lg:pt-48 lg:pb-28">
+      <section className={styles.hero.section}>
         <AuroraBackground intensity="subtle" />
         <GridPattern
           width={48}
           height={48}
-          className="fill-transparent stroke-border/60 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]"
+          className={styles.hero.gridPattern}
         />
-        <div className="relative mx-auto max-w-6xl px-4 text-center lg:px-8">
+        <div className={styles.hero.content}>
           <BlurFade delay={0} direction="down">
-            <span className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 px-4 py-1.5 text-sm backdrop-blur">
-              <SparklesIcon className="size-3.5 text-primary" />
-              <span className="font-medium">Full-Stack SaaS Starter Kit</span>
+            <span className={styles.hero.badge}>
+              <SparklesIcon className={styles.hero.badgeIcon} />
+              <span className={styles.hero.badgeText}>
+                Full-Stack SaaS Starter Kit
+              </span>
             </span>
           </BlurFade>
 
-          <h1 className="mx-auto mt-8 max-w-4xl text-5xl font-semibold tracking-tight text-balance lg:text-7xl">
+          <h1 className={styles.hero.title}>
             <TextReveal text="Everything you need to build your SaaS." /> <br />
             <TextReveal text="Build" />{" "}
             <AnimatedGradientText>
@@ -140,7 +247,7 @@ const LandingPage = () => {
           </h1>
 
           <BlurFade delay={0.35}>
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground text-pretty">
+            <p className={styles.hero.description}>
               A production-ready foundation with Next.js, FastAPI, PostgreSQL,
               Clerk, and Stripe — authentication, subscriptions, database
               synchronization, and backend integration already set up.
@@ -148,9 +255,9 @@ const LandingPage = () => {
           </BlurFade>
 
           <BlurFade delay={0.5}>
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+            <div className={styles.hero.actions}>
               <ShimmerButton>
-                <RocketIcon className="size-4" />
+                <RocketIcon className={styles.hero.actionIcon} />
                 View Live Demo
               </ShimmerButton>
               <Button variant="ghost" size="lg" asChild>
@@ -160,7 +267,7 @@ const LandingPage = () => {
           </BlurFade>
 
           <BlurFade delay={0.6}>
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <div className={styles.hero.socialProof}>
               <AvatarCircles
                 people={[
                   "Maya Chen",
@@ -171,13 +278,13 @@ const LandingPage = () => {
                 ]}
                 extra={100}
               />
-              <div className="flex flex-col items-center gap-0.5 sm:items-start">
-                <span className="flex gap-0.5 text-amber-400">
+              <div className={styles.hero.socialProofContent}>
+                <span className={styles.hero.socialProofStars}>
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <StarIcon key={i} className="size-4 fill-current" />
+                    <StarIcon key={i} className={styles.hero.socialProofStar} />
                   ))}
                 </span>
-                <span className="text-sm text-muted-foreground">
+                <span className={styles.hero.socialProofText}>
                   Social proof disclaimer
                 </span>
               </div>
@@ -186,24 +293,22 @@ const LandingPage = () => {
 
           {/* Product mockup */}
           <BlurFade delay={0.75} offset={32}>
-            <HeroMockup className="mt-20" />
+            <HeroMockup className={styles.hero.mockup} />
           </BlurFade>
 
           {/* Stats */}
-          <div className="mx-auto mt-20 grid max-w-4xl grid-cols-2 gap-8 lg:grid-cols-4">
+          <div className={styles.hero.stats}>
             {stats.map((stat, i) => (
               <BlurFade key={stat.label} delay={i * 0.1}>
-                <div className="flex flex-col items-center gap-1">
-                  <span className="text-4xl font-semibold tracking-tight">
+                <div className={styles.hero.stat}>
+                  <span className={styles.hero.statValue}>
                     <NumberTicker
                       value={stat.value}
                       prefix={stat.prefix}
                       suffix={stat.suffix}
                     />
                   </span>
-                  <span className="text-sm text-muted-foreground">
-                    {stat.label}
-                  </span>
+                  <span className={styles.hero.statLabel}>{stat.label}</span>
                 </div>
               </BlurFade>
             ))}
@@ -212,23 +317,23 @@ const LandingPage = () => {
       </section>
 
       {/* Integrations beam */}
-      <section className="relative py-16 lg:py-24">
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 lg:grid-cols-2 lg:gap-20 lg:px-8">
+      <section className={styles.section}>
+        <div className={styles.integrations.content}>
           <BlurFade direction="right">
             <div>
-              <span className="text-sm font-medium text-primary">
+              <span className={styles.integrations.eyebrow}>
                 Full-stack foundation
               </span>
-              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-balance lg:text-4xl">
+              <h2 className={styles.integrations.title}>
                 Your SaaS infrastructure,{" "}
-                <span className="text-primary">already connected.</span>
+                <span className={styles.accent}>already connected.</span>
               </h2>
-              <p className="mt-4 text-muted-foreground">
+              <p className={styles.integrations.description}>
                 Skip the repetitive setup. Authentication, billing, persistence,
                 and your application backend are already integrated — so you can
                 focus on building the product.
               </p>
-              <ul className="mt-6 space-y-3 text-sm">
+              <ul className={styles.integrations.list}>
                 {[
                   "Authentication ready — Clerk auth synchronized with PostgreSQL.",
                   "Billing built in — Stripe subscriptions, webhooks, and Customer Portal.",
@@ -237,9 +342,9 @@ const LandingPage = () => {
                   "Modern UI — shadcn/ui,  Velora components and Tailwind CSS.",
                   "AI-ready architecture — Python foundation ready for your AI stack.",
                 ].map((item) => (
-                  <li key={item} className="flex items-center gap-3">
-                    <span className="flex size-5 items-center justify-center rounded-full bg-primary/15 text-primary">
-                      <CheckIcon className="size-3" />
+                  <li key={item} className={styles.integrations.listItem}>
+                    <span className={styles.featureCheck}>
+                      <CheckIcon className={styles.featureCheckIcon} />
                     </span>
                     {item}
                   </li>
@@ -254,35 +359,31 @@ const LandingPage = () => {
       </section>
 
       {/* Spotlight cards */}
-      <section className="relative py-16 lg:py-24">
-        <div className="mx-auto max-w-6xl px-4 lg:px-8">
-          <div className="grid gap-6 md:grid-cols-3">
+      <section className={styles.section}>
+        <div className={styles.content}>
+          <div className={styles.cards.grid}>
             {[
               {
-                icon: <RocketIcon className="size-6" />,
+                icon: <RocketIcon className={styles.cards.icon} />,
                 title: "Built for real SaaS",
                 body: "Authentication, subscriptions, authorization, webhooks, and user synchronization — implemented as real production flows, not mocked examples.",
               },
               {
-                icon: <LayersIcon className="size-6" />,
+                icon: <LayersIcon className={styles.cards.icon} />,
                 title: "Full-stack by design",
                 body: "Next.js owns the SaaS layer. FastAPI owns your product logic. Both share PostgreSQL with clear domain boundaries.",
               },
               {
-                icon: <ZapIcon className="size-6" />,
+                icon: <ZapIcon className={styles.cards.icon} />,
                 title: "Made to be cloned",
                 body: "Standard technologies, minimal abstractions, and a focused foundation designed to become your next product — not another framework to learn.",
               },
             ].map((card, i) => (
               <BlurFade key={card.title} delay={i * 0.12}>
-                <SpotlightCard className="h-full p-8">
-                  <div className="mb-4 w-fit rounded-xl bg-primary/10 p-3 text-primary">
-                    {card.icon}
-                  </div>
-                  <h3 className="text-lg font-semibold">{card.title}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    {card.body}
-                  </p>
+                <SpotlightCard className={styles.cards.card}>
+                  <div className={styles.cards.iconContainer}>{card.icon}</div>
+                  <h3 className={styles.cards.title}>{card.title}</h3>
+                  <p className={styles.cards.description}>{card.body}</p>
                 </SpotlightCard>
               </BlurFade>
             ))}
@@ -291,44 +392,45 @@ const LandingPage = () => {
       </section>
 
       {/* Testimonials */}
-      <section className="relative py-16 lg:py-24">
-        <div className="mx-auto max-w-6xl px-4 lg:px-8">
+      <section className={styles.section}>
+        <div className={styles.content}>
           <BlurFade>
-            <h2 className="mx-auto max-w-2xl text-center text-3xl font-semibold tracking-tight text-balance lg:text-5xl">
-              What customers <span className="text-primary">are saying</span>
+            <h2 className={styles.sectionHeading}>
+              What customers <span className={styles.accent}>are saying</span>
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-center text-muted-foreground">
+            <p className={styles.sectionDescription}>
               A ready-to-customize testimonial section for customer stories,
               reviews, and social proof.
             </p>
           </BlurFade>
-          <div className="mt-16 columns-1 gap-6 md:columns-2 lg:columns-3 [&>*]:mb-6">
+          <div className={styles.testimonials.grid}>
             {testimonials.map((t, i) => (
               <BlurFade
                 key={`${i}_${t.name}`}
                 delay={(i % 3) * 0.1}
-                className="break-inside-avoid"
+                className={styles.testimonials.item}
               >
                 <TiltCard>
-                  <figure className="rounded-2xl border bg-card p-6">
-                    <span className="flex gap-0.5 text-amber-400">
+                  <figure className={styles.testimonials.card}>
+                    <span className={styles.testimonials.stars}>
                       {Array.from({ length: 5 }).map((_, s) => (
-                        <StarIcon key={s} className="size-3.5 fill-current" />
+                        <StarIcon
+                          key={s}
+                          className={styles.testimonials.star}
+                        />
                       ))}
                     </span>
-                    <blockquote className="mt-4 text-sm text-card-foreground">
+                    <blockquote className={styles.testimonials.quote}>
                       “{t.quote}”
                     </blockquote>
-                    <figcaption className="mt-4 flex items-center gap-3">
+                    <figcaption className={styles.testimonials.figcaption}>
                       <AvatarCircles
                         people={[t.name]}
-                        className="[&>span]:size-8 [&>span]:text-[10px]"
+                        className={styles.testimonials.avatar}
                       />
                       <div>
-                        <p className="text-sm font-medium">{t.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {t.role}
-                        </p>
+                        <p className={styles.testimonials.name}>{t.name}</p>
+                        <p className={styles.testimonials.role}>{t.role}</p>
                       </div>
                     </figcaption>
                   </figure>
@@ -340,39 +442,36 @@ const LandingPage = () => {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="relative py-16 lg:py-24">
-        <div className="mx-auto max-w-6xl px-4 lg:px-8">
+      <section id="pricing" className={styles.section}>
+        <div className={styles.content}>
           <BlurFade>
-            <h2 className="mx-auto max-w-2xl text-center text-3xl font-semibold tracking-tight text-balance lg:text-5xl">
+            <h2 className={styles.sectionHeading}>
               Plans built for{" "}
-              <span className="text-primary">your product.</span>
+              <span className={styles.accent}>your product.</span>
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-center text-muted-foreground">
+            <p className={styles.sectionDescription}>
               Customizable plans already wired to real Stripe data - Checkout,
               webhooks, subscription synchronization, and billing
               management.{" "}
             </p>
           </BlurFade>
 
-          <div className="mx-auto mt-16 grid max-w-4xl gap-6 md:grid-cols-2">
+          <div className={styles.pricing.grid}>
             <BlurFade>
-              <div className="flex h-full flex-col rounded-2xl border bg-card p-8">
-                <h3 className="text-lg font-semibold">Free</h3>
-                <p className="mt-2 text-sm text-muted-foreground">
+              <div className={styles.pricing.card}>
+                <h3 className={styles.pricing.planName}>Free</h3>
+                <p className={styles.pricing.planDescription}>
                   Everything you see in this showcase.
                 </p>
-                <p className="mt-6 text-5xl font-semibold tracking-tight">
+                <p className={styles.pricing.price}>
                   $0
-                  <span className="text-base font-normal text-muted-foreground">
-                    {" "}
-                    forever
-                  </span>
+                  <span className={styles.pricing.pricePeriod}> forever</span>
                 </p>
-                <ul className="mt-8 flex-1 space-y-3 text-sm">
+                <ul className={styles.pricing.featureList}>
                   {freeFeatures.map((f) => (
-                    <li key={f} className="flex items-center gap-3">
-                      <span className="flex size-5 items-center justify-center rounded-full bg-primary/15 text-primary">
-                        <CheckIcon className="size-3" />
+                    <li key={f} className={styles.pricing.featureItem}>
+                      <span className={styles.featureCheck}>
+                        <CheckIcon className={styles.featureCheckIcon} />
                       </span>
                       {f}
                     </li>
@@ -381,7 +480,7 @@ const LandingPage = () => {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="mt-8 w-full rounded-full"
+                  className={styles.pricing.button}
                 >
                   Get started
                 </Button>
@@ -389,35 +488,30 @@ const LandingPage = () => {
             </BlurFade>
 
             <BlurFade delay={0.12}>
-              <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border bg-card p-8">
+              <div className={styles.pricing.proCard}>
                 <BorderBeam size={80} duration={8} />
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-primary">Pro</h3>
-                  <span className="rounded-full bg-primary/15 px-3 py-1 text-xs font-medium text-primary">
-                    Coming soon
-                  </span>
+                <div className={styles.pricing.planHeader}>
+                  <h3 className={styles.pricing.proPlanName}>Pro</h3>
+                  <span className={styles.pricing.planBadge}>Coming soon</span>
                 </div>
-                <p className="mt-2 text-sm text-muted-foreground">
+                <p className={styles.pricing.planDescription}>
                   For teams shipping more than one page.
                 </p>
-                <p className="mt-6 text-5xl font-semibold tracking-tight">
+                <p className={styles.pricing.price}>
                   $99
-                  <span className="text-base font-normal text-muted-foreground">
-                    {" "}
-                    lifetime
-                  </span>
+                  <span className={styles.pricing.pricePeriod}> lifetime</span>
                 </p>
-                <ul className="mt-8 flex-1 space-y-3 text-sm">
+                <ul className={styles.pricing.featureList}>
                   {proFeatures.map((f) => (
-                    <li key={f} className="flex items-center gap-3">
-                      <span className="flex size-5 items-center justify-center rounded-full bg-primary/15 text-primary">
-                        <CheckIcon className="size-3" />
+                    <li key={f} className={styles.pricing.featureItem}>
+                      <span className={styles.featureCheck}>
+                        <CheckIcon className={styles.featureCheckIcon} />
                       </span>
                       {f}
                     </li>
                   ))}
                 </ul>
-                <ShimmerButton className="mt-8 w-full">
+                <ShimmerButton className={styles.pricing.proButton}>
                   Join the waitlist
                 </ShimmerButton>
               </div>
@@ -427,21 +521,23 @@ const LandingPage = () => {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="py-16 lg:py-24">
-        <div className="mx-auto max-w-3xl px-4 lg:px-8">
+      <section id="faq" className={styles.faq.section}>
+        <div className={styles.faq.container}>
           <BlurFade>
-            <h2 className="text-center text-3xl font-semibold tracking-tight lg:text-4xl">
-              Frequently asked questions
-            </h2>
+            <h2 className={styles.faq.heading}>Frequently asked questions</h2>
           </BlurFade>
           <BlurFade delay={0.15}>
-            <Accordion type="single" collapsible className="mt-12">
+            <Accordion
+              type="single"
+              collapsible
+              className={styles.faq.accordion}
+            >
               {faqs.map((faq) => (
                 <AccordionItem key={faq.q} value={faq.q}>
-                  <AccordionTrigger className="text-left text-base">
+                  <AccordionTrigger className={styles.faq.trigger}>
                     {faq.q}
                   </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground">
+                  <AccordionContent className={styles.faq.answer}>
                     {faq.a}
                   </AccordionContent>
                 </AccordionItem>
@@ -452,22 +548,22 @@ const LandingPage = () => {
       </section>
 
       {/* CTA */}
-      <section className="relative overflow-hidden py-16 lg:py-24">
+      <section className={styles.callToAction.section}>
         <AuroraBackground intensity="subtle" />
         <Particles quantity={50} />
-        <div className="relative mx-auto max-w-4xl px-4 text-center lg:px-8">
+        <div className={styles.callToAction.content}>
           <BlurFade>
-            <h2 className="text-4xl font-semibold tracking-tight text-balance lg:text-6xl">
+            <h2 className={styles.callToAction.heading}>
               Start with the foundation.{" "}
-              <span className="text-primary">Focus on what matters.</span>
+              <span className={styles.accent}>Focus on what matters.</span>
             </h2>
-            <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground">
+            <p className={styles.callToAction.description}>
               Skip the repetitive SaaS setup and start with authentication,
               billing, persistence, and backend integration already connected.
             </p>
-            <div className="mt-10">
-              <ShimmerButton className="h-14 px-10 text-base">
-                <RocketIcon className="size-5" />
+            <div className={styles.callToAction.action}>
+              <ShimmerButton className={styles.callToAction.button}>
+                <RocketIcon className={styles.callToAction.buttonIcon} />
                 View Live Demo
               </ShimmerButton>
             </div>

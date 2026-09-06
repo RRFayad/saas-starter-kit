@@ -14,7 +14,18 @@ import {
 import { AnimatedBeam } from "@/components/velora/animated-beam";
 import { cn } from "@/lib/utils";
 
-function Node({
+const styles = {
+  node: "z-10 flex size-13 items-center justify-center rounded-full border bg-card shadow-lg [&_svg]:size-5",
+  container:
+    "relative flex h-96 w-full items-center justify-between px-2 sm:px-8",
+  nodeColumn: "flex h-full flex-col justify-between py-6",
+  mutedIcon: "text-muted-foreground",
+  centerNode:
+    "size-18 border-primary/40 bg-primary/10 shadow-primary/20 [&_svg]:size-8",
+  primaryIcon: "text-primary",
+};
+
+const Node = ({
   ref,
   className,
   children,
@@ -22,25 +33,19 @@ function Node({
   ref?: Ref<HTMLDivElement>;
   className?: string;
   children: React.ReactNode;
-}) {
+}) => {
   return (
-    <div
-      ref={ref}
-      className={cn(
-        "z-10 flex size-13 items-center justify-center rounded-full border bg-card shadow-lg [&_svg]:size-5",
-        className,
-      )}
-    >
+    <div ref={ref} className={cn(styles.node, className)}>
       {children}
     </div>
   );
-}
+};
 
 /**
  * Six service nodes beaming into a central hub — the classic
  * integrations diagram, built from <AnimatedBeam />.
  */
-export function IntegrationsBeam({ className }: { className?: string }) {
+export const IntegrationsBeam = ({ className }: { className?: string }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const centerRef = useRef<HTMLDivElement>(null);
   const left1 = useRef<HTMLDivElement>(null);
@@ -51,41 +56,32 @@ export function IntegrationsBeam({ className }: { className?: string }) {
   const right3 = useRef<HTMLDivElement>(null);
 
   return (
-    <div
-      ref={containerRef}
-      className={cn(
-        "relative flex h-96 w-full items-center justify-between px-2 sm:px-8",
-        className,
-      )}
-    >
-      <div className="flex h-full flex-col justify-between py-6">
+    <div ref={containerRef} className={cn(styles.container, className)}>
+      <div className={styles.nodeColumn}>
         <Node ref={left1}>
-          <DatabaseIcon className="text-muted-foreground" />
+          <DatabaseIcon className={styles.mutedIcon} />
         </Node>
         <Node ref={left2}>
-          <CodeIcon className="text-muted-foreground" />
+          <CodeIcon className={styles.mutedIcon} />
         </Node>
         <Node ref={left3}>
-          <CloudIcon className="text-muted-foreground" />
+          <CloudIcon className={styles.mutedIcon} />
         </Node>
       </div>
 
-      <Node
-        ref={centerRef}
-        className="size-18 border-primary/40 bg-primary/10 shadow-primary/20 [&_svg]:size-8"
-      >
-        <SparklesIcon className="text-primary" />
+      <Node ref={centerRef} className={styles.centerNode}>
+        <SparklesIcon className={styles.primaryIcon} />
       </Node>
 
-      <div className="flex h-full flex-col justify-between py-6">
+      <div className={styles.nodeColumn}>
         <Node ref={right1}>
-          <MailIcon className="text-muted-foreground" />
+          <MailIcon className={styles.mutedIcon} />
         </Node>
         <Node ref={right2}>
-          <WalletIcon className="text-muted-foreground" />
+          <WalletIcon className={styles.mutedIcon} />
         </Node>
         <Node ref={right3}>
-          <BoxIcon className="text-muted-foreground" />
+          <BoxIcon className={styles.mutedIcon} />
         </Node>
       </div>
 
@@ -133,4 +129,4 @@ export function IntegrationsBeam({ className }: { className?: string }) {
       />
     </div>
   );
-}
+};

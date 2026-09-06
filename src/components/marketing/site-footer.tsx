@@ -27,44 +27,51 @@ const groups = [
     : []),
 ];
 
+const styles = {
+  footer: "border-t border-border/40 py-14",
+  content: "mx-auto grid max-w-6xl gap-10 px-4 lg:px-8",
+  contentWithResources: "md:grid-cols-[1.6fr_1fr_1fr]",
+  contentWithoutResources: "md:grid-cols-[1.6fr_1fr]",
+  brand: "font-semibold",
+  description: "mt-3 max-w-xs text-sm text-muted-foreground",
+  groupTitle: "text-sm font-semibold",
+  links: "mt-4 space-y-2.5 text-sm text-muted-foreground",
+  link: "transition-colors hover:text-foreground",
+  footerBar:
+    "mx-auto mt-12 flex max-w-6xl flex-col items-center justify-between gap-2 border-t border-border/40 px-4 pt-6 text-xs text-muted-foreground md:flex-row lg:px-8",
+};
+
 export const SiteFooter = () => {
+  const contentStyles = `${styles.content} ${
+    siteConfig.github
+      ? styles.contentWithResources
+      : styles.contentWithoutResources
+  }`;
+
   return (
-    <footer className="border-t border-border/40 py-14">
-      <div
-        className={`mx-auto grid max-w-6xl gap-10 px-4 lg:px-8 ${
-          siteConfig.github
-            ? "md:grid-cols-[1.6fr_1fr_1fr]"
-            : "md:grid-cols-[1.6fr_1fr]"
-        }`}
-      >
+    <footer className={styles.footer}>
+      <div className={contentStyles}>
         <div>
-          <Link href="/" className="font-semibold">
+          <Link href="/" className={styles.brand}>
             SaaS Starter Kit
           </Link>
-          <p className="mt-3 max-w-xs text-sm text-muted-foreground">
+          <p className={styles.description}>
             A full-stack foundation for building and shipping modern SaaS
             products.
           </p>
         </div>
         {groups.map((group) => (
           <nav key={group.title} aria-label={group.title}>
-            <h3 className="text-sm font-semibold">{group.title}</h3>
-            <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
+            <h3 className={styles.groupTitle}>{group.title}</h3>
+            <ul className={styles.links}>
               {group.links.map((link) => (
                 <li key={link.text}>
                   {link.href.startsWith("http") ? (
-                    <a
-                      href={link.href}
-                      rel="noopener"
-                      className="transition-colors hover:text-foreground"
-                    >
+                    <a href={link.href} rel="noopener" className={styles.link}>
                       {link.text}
                     </a>
                   ) : (
-                    <Link
-                      href={link.href}
-                      className="transition-colors hover:text-foreground"
-                    >
+                    <Link href={link.href} className={styles.link}>
                       {link.text}
                     </Link>
                   )}
@@ -74,7 +81,7 @@ export const SiteFooter = () => {
           </nav>
         ))}
       </div>
-      <div className="mx-auto mt-12 flex max-w-6xl flex-col items-center justify-between gap-2 border-t border-border/40 px-4 pt-6 text-xs text-muted-foreground md:flex-row lg:px-8">
+      <div className={styles.footerBar}>
         <span>© 2026 Renan Fayad</span>
         {siteConfig.github && (
           <a
@@ -82,7 +89,7 @@ export const SiteFooter = () => {
             aria-label="GitHub"
             rel="noopener"
             target="_blank"
-            className="transition-colors hover:text-foreground"
+            className={styles.link}
           >
             GitHub
           </a>

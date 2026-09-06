@@ -5,11 +5,16 @@ import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
 
+const styles = {
+  sunIcon: "hidden dark:block",
+  moonIcon: "dark:hidden",
+};
+
 /**
  * Renders both icons and lets CSS pick one, so server and client
  * markup match without a mounted guard.
  */
-export function ThemeToggle() {
+export const ThemeToggle = () => {
   const { resolvedTheme, setTheme } = useTheme();
 
   return (
@@ -19,8 +24,8 @@ export function ThemeToggle() {
       aria-label="Toggle theme"
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
     >
-      <SunIcon className="hidden dark:block" />
-      <MoonIcon className="dark:hidden" />
+      <SunIcon className={styles.sunIcon} />
+      <MoonIcon className={styles.moonIcon} />
     </Button>
   );
-}
+};

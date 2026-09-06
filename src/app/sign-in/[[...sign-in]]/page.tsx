@@ -1,9 +1,15 @@
 import { SignIn } from "@clerk/nextjs";
 
-export default function SignInPage() {
+const styles = {
+  page: "flex min-h-screen items-center justify-center",
+};
+
+const SignInPage = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center">
+    <div className={styles.page}>
       <SignIn />
     </div>
   );
-}
+};
+
+export default SignInPage;
