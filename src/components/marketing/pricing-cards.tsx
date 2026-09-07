@@ -90,15 +90,19 @@ export const PricingCards = ({ plans }: PricingCardsProps) => {
                 forceRedirectUrl={`/checkout?plan=${plan.plan}`}
                 signInForceRedirectUrl={`/checkout?plan=${plan.plan}`}
               >
-                <Button
-                  className={
-                    plan.isMostPopular ? styles.popularButton : styles.button
-                  }
-                  size="lg"
-                  variant={plan.isMostPopular ? "default" : "outline"}
-                >
-                  Get started
-                </Button>
+                {plan.isMostPopular ? (
+                  <ShimmerButton className={styles.popularButton}>
+                    Get started
+                  </ShimmerButton>
+                ) : (
+                  <Button
+                    className={styles.button}
+                    size="lg"
+                    variant="outline"
+                  >
+                    Get started
+                  </Button>
+                )}
               </SignUpButton>
             </Show>
             <Show when="signed-in">

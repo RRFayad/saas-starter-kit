@@ -1,5 +1,7 @@
 import "server-only";
 
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { subscriptions } from "@/lib/db/schema";
@@ -63,4 +65,18 @@ export const canCurrentUserAccessSubscriptionPlan = async (
   const subscription = await getCurrentUserSubscription();
 
   return canAccessSubscriptionPlan(subscription, requiredPlan);
+};
+
+export const requireCurrentUserSubscriptionPlan = async (
+  requiredPlan: SubscriptionPlan,
+): Promise<void> => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    redirect("/sign-in");
+  }
+
+  if (!(await canCurrentUserAccessSubscriptionPlan(requiredPlan))) {
+    redirect("/pricing");
+  }
 };
