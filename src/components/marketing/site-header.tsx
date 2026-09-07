@@ -12,7 +12,7 @@ const styles = {
     "fixed inset-x-0 top-0 z-50 border-b border-border/40 bg-background/70 backdrop-blur-xl",
   ),
   content: tw(
-    "mx-auto flex h-16 max-w-6xl items-center justify-between px-4 lg:px-8",
+    "mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto_1fr] items-center px-4 lg:px-8",
   ),
   brand: tw("flex items-center gap-2 font-semibold"),
   brandIcon: tw("size-5 text-primary"),
@@ -20,7 +20,7 @@ const styles = {
     "hidden items-center gap-6 text-sm text-muted-foreground md:flex",
   ),
   navigationLink: tw("transition-colors hover:text-foreground"),
-  actions: tw("flex items-center gap-2"),
+  actions: tw("col-start-3 flex items-center gap-2 justify-self-end"),
 };
 
 export const SiteHeader = () => {
