@@ -1,0 +1,39 @@
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+
+import { StartCheckout } from "@/app/checkout/start-checkout";
+import { getAvailableStripePlans } from "@/lib/stripe/config";
+
+type CheckoutPageProps = {
+  searchParams: Promise<{ plan?: string | string[] }>;
+};
+
+const styles = {
+  page: "flex min-h-screen items-center justify-center px-4",
+};
+
+const CheckoutPage = async ({ searchParams }: CheckoutPageProps) => {
+  const { plan } = await searchParams;
+  const selectedPlan =
+    typeof plan === "string"
+      ? getAvailableStripePlans().find(({ plan: id }) => id === plan)?.plan
+      : undefined;
+
+  if (!selectedPlan) {
+    redirect("/pricing");
+  }
+
+  const { userId } = await auth();
+
+  if (!userId) {
+    redirect("/pricing");
+  }
+
+  return (
+    <main className={styles.page}>
+      <StartCheckout plan={selectedPlan} />
+    </main>
+  );
+};
+
+export default CheckoutPage;

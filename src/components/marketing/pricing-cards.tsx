@@ -86,7 +86,10 @@ export const PricingCards = ({ plans }: PricingCardsProps) => {
               ))}
             </ul>
             <Show when="signed-out">
-              <SignUpButton forceRedirectUrl="/pricing">
+              <SignUpButton
+                forceRedirectUrl={`/checkout?plan=${plan.plan}`}
+                signInForceRedirectUrl={`/checkout?plan=${plan.plan}`}
+              >
                 <Button
                   className={
                     plan.isMostPopular ? styles.popularButton : styles.button

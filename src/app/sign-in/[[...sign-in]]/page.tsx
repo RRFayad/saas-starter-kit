@@ -7,7 +7,10 @@ const styles = {
 const SignInPage = () => {
   return (
     <div className={styles.page}>
-      <SignIn />
+      <SignIn
+        fallbackRedirectUrl="/dashboard"
+        signUpFallbackRedirectUrl="/dashboard"
+      />
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Show, UserButton } from "@clerk/nextjs";
 import { SparklesIcon, StarIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -25,16 +26,21 @@ export const SiteHeader = () => {
           <SparklesIcon className={styles.brandIcon} />
           Full-Stack SaaS Starter Kit
         </Link>
-        <nav className={styles.navigation}>
-          <Link href="/sign-in" className={styles.navigationLink}>
-            Sign In
-          </Link>
-          <Link href="/sign-up" className={styles.navigationLink}>
-            Sign Up
-          </Link>
-        </nav>
+        <Show when="signed-out">
+          <nav className={styles.navigation}>
+            <Link href="/sign-in" className={styles.navigationLink}>
+              Sign In
+            </Link>
+            <Link href="/sign-up" className={styles.navigationLink}>
+              Sign Up
+            </Link>
+          </nav>
+        </Show>
         <div className={styles.actions}>
           <ThemeToggle />
+          <Show when="signed-in">
+            <UserButton />
+          </Show>
           {siteConfig.github && (
             <Button variant="outline" size="sm" asChild>
               <a href={siteConfig.github} rel="noopener" target="_blank">

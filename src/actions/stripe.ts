@@ -9,7 +9,7 @@ import {
   createStripeCheckoutSession,
   createStripeCustomerPortalSession,
 } from "@/lib/stripe";
-import { getUserByClerkId } from "@/lib/user/user";
+import { getOrCreateUserByClerkId, getUserByClerkId } from "@/lib/user/user";
 import { getEnvVar } from "@/lib/utils";
 import type { SubscriptionPlan } from "@/types/database";
 
@@ -30,7 +30,7 @@ export const checkout = async (formData: FormData) => {
     throw new Error("Invalid subscription plan");
   }
 
-  const user = await getUserByClerkId(clerkUserId);
+  const user = await getOrCreateUserByClerkId(clerkUserId);
 
   if (!user) {
     throw new Error("Application user not found");
