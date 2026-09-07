@@ -62,6 +62,14 @@
   --animate-aurora-3: aurora-3 22s ease-in-out infinite alternate;
   --animate-meteor: meteor 5s linear infinite;
   --animate-retro-grid: retro-grid 18s linear infinite;
+  @keyframes retro-grid {
+  from {
+    transform: translateY(-50%);
+    }
+  to {
+    transform: translateY(0);
+    }
+  }
 }
 
 :root {
