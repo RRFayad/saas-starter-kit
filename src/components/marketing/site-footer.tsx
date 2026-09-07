@@ -3,14 +3,6 @@ import Link from "next/link";
 import { siteConfig } from "@/lib/site-config";
 
 const groups = [
-  {
-    title: "Explore",
-    links: [
-      { text: "Live Demo", href: "/" },
-      { text: "Pricing", href: "/pricing" },
-      { text: "FAQ", href: "/#faq" },
-    ],
-  },
   ...(siteConfig.github
     ? [
         {
@@ -30,23 +22,21 @@ const groups = [
 const styles = {
   footer: "border-t border-border/40 py-14",
   content: "mx-auto grid max-w-6xl gap-10 px-4 lg:px-8",
-  contentWithResources: "md:grid-cols-[1.6fr_1fr_1fr]",
-  contentWithoutResources: "md:grid-cols-[1.6fr_1fr]",
+  contentWithResources: "md:grid-cols-[1.6fr_1fr]",
   brand: "font-semibold",
   description: "mt-3 max-w-xs text-sm text-muted-foreground",
+  navigation: "md:justify-self-end",
   groupTitle: "text-sm font-semibold",
   links: "mt-4 space-y-2.5 text-sm text-muted-foreground",
   link: "transition-colors hover:text-foreground",
   footerBar:
-    "mx-auto mt-12 flex max-w-6xl flex-col items-center justify-between gap-2 border-t border-border/40 px-4 pt-6 text-xs text-muted-foreground md:flex-row lg:px-8",
+    "mx-auto mt-12 flex max-w-6xl flex-col items-center gap-2 border-t border-border/40 px-4 pt-6 text-xs text-muted-foreground md:flex-row md:justify-end lg:px-8",
 };
 
 export const SiteFooter = () => {
-  const contentStyles = `${styles.content} ${
-    siteConfig.github
-      ? styles.contentWithResources
-      : styles.contentWithoutResources
-  }`;
+  const contentStyles = siteConfig.github
+    ? `${styles.content} ${styles.contentWithResources}`
+    : styles.content;
 
   return (
     <footer className={styles.footer}>
@@ -61,7 +51,11 @@ export const SiteFooter = () => {
           </p>
         </div>
         {groups.map((group) => (
-          <nav key={group.title} aria-label={group.title}>
+          <nav
+            key={group.title}
+            aria-label={group.title}
+            className={styles.navigation}
+          >
             <h3 className={styles.groupTitle}>{group.title}</h3>
             <ul className={styles.links}>
               {group.links.map((link) => (
@@ -83,17 +77,6 @@ export const SiteFooter = () => {
       </div>
       <div className={styles.footerBar}>
         <span>© 2026 Renan Fayad</span>
-        {siteConfig.github && (
-          <a
-            href={siteConfig.github}
-            aria-label="GitHub"
-            rel="noopener"
-            target="_blank"
-            className={styles.link}
-          >
-            GitHub
-          </a>
-        )}
       </div>
     </footer>
   );
