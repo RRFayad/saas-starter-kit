@@ -8,55 +8,19 @@ import {
 } from "lucide-react";
 
 import { PageHeader } from "@/components/subscribed/page-header";
+import type { DashboardData } from "@/lib/backend/dashboard";
 import { tw } from "@/lib/utils";
 
-const metrics = [
-  {
-    label: "Monthly revenue",
-    value: "$24,680",
-    change: "+12.5%",
-    icon: TrendingUpIcon,
-    positive: true,
-  },
-  {
-    label: "Active customers",
-    value: "1,284",
-    change: "+8.2%",
-    icon: UsersIcon,
-    positive: true,
-  },
-  {
-    label: "Conversion rate",
-    value: "4.86%",
-    change: "+0.6%",
-    icon: MousePointerClickIcon,
-    positive: true,
-  },
-  {
-    label: "Refunds",
-    value: "$284",
-    change: "-4.1%",
-    icon: CreditCardIcon,
-    positive: false,
-  },
-];
+type OverviewProps = {
+  dashboardData: DashboardData | null;
+};
 
-const chartData = [
-  { label: "Mon", value: 46 },
-  { label: "Tue", value: 62 },
-  { label: "Wed", value: 54 },
-  { label: "Thu", value: 78 },
-  { label: "Fri", value: 69 },
-  { label: "Sat", value: 88 },
-  { label: "Sun", value: 76 },
-];
-
-const activity = [
-  { customer: "Morgan Lee", action: "Upgraded to Premium", amount: "+$29.00" },
-  { customer: "Avery Shah", action: "Started a trial", amount: "$0.00" },
-  { customer: "Jamie Cruz", action: "Renewed subscription", amount: "+$12.00" },
-  { customer: "Taylor Chen", action: "Purchased Basic", amount: "+$12.00" },
-];
+const metricIcons = {
+  revenue: TrendingUpIcon,
+  customers: UsersIcon,
+  conversion: MousePointerClickIcon,
+  refunds: CreditCardIcon,
+};
 
 const styles = {
   page: tw("mx-auto w-full max-w-7xl space-y-8"),
@@ -95,89 +59,112 @@ const styles = {
   activityAmount: tw(
     "text-sm font-medium text-emerald-600 dark:text-emerald-400",
   ),
+  unavailable: tw(
+    "rounded-xl border border-dashed bg-muted/30 p-8 text-center",
+  ),
+  unavailableHeading: tw("font-medium"),
+  unavailableDescription: tw("mt-2 text-sm text-muted-foreground"),
 };
 
-export const Overview = () => {
+export const Overview = ({ dashboardData }: OverviewProps) => {
+  const description = dashboardData?.user_name
+    ? `A sample dashboard served by FastAPI for ${dashboardData.user_name}.`
+    : "A sample dashboard showing the kind of product UI this starter can support.";
+
   return (
     <div className={styles.page}>
       <PageHeader
         eyebrow="Overview"
         title="Your business at a glance."
-        description="A sample dashboard showing the kind of product UI this starter can support."
+        description={description}
         action={<span className={styles.sampleBadge}>Sample data</span>}
       />
 
-      <section className={styles.metrics} aria-label="Sample metrics">
-        {metrics.map((metric) => {
-          const ChangeIcon = metric.positive
-            ? ArrowUpRightIcon
-            : ArrowDownRightIcon;
+      {dashboardData ? (
+        <>
+          <section className={styles.metrics} aria-label="Sample metrics">
+            {dashboardData.metrics.map((metric) => {
+              const MetricIcon = metricIcons[metric.icon];
+              const ChangeIcon = metric.positive
+                ? ArrowUpRightIcon
+                : ArrowDownRightIcon;
 
-          return (
-            <article key={metric.label} className={styles.metricCard}>
-              <div className={styles.metricHeader}>
-                <p className={styles.metricLabel}>{metric.label}</p>
-                <metric.icon className={styles.metricIcon} />
-              </div>
-              <p className={styles.metricValue}>{metric.value}</p>
-              <p
-                className={`${styles.metricChange} ${metric.positive ? styles.positiveChange : styles.negativeChange}`}
-              >
-                <ChangeIcon className={styles.changeIcon} />
-                {metric.change} from last month
-              </p>
-            </article>
-          );
-        })}
-      </section>
+              return (
+                <article key={metric.label} className={styles.metricCard}>
+                  <div className={styles.metricHeader}>
+                    <p className={styles.metricLabel}>{metric.label}</p>
+                    <MetricIcon className={styles.metricIcon} />
+                  </div>
+                  <p className={styles.metricValue}>{metric.value}</p>
+                  <p
+                    className={`${styles.metricChange} ${metric.positive ? styles.positiveChange : styles.negativeChange}`}
+                  >
+                    <ChangeIcon className={styles.changeIcon} />
+                    {metric.change} from last month
+                  </p>
+                </article>
+              );
+            })}
+          </section>
 
-      <section className={styles.contentGrid}>
-        <article className={styles.panel}>
-          <div className={styles.panelHeader}>
-            <div>
-              <h2 className={styles.panelTitle}>Revenue activity</h2>
-              <p className={styles.panelDescription}>Last 7 days</p>
-            </div>
-            <p className={styles.chartTotal}>
-              $6,842
-              <span className={styles.chartTotalLabel}>Sample total</span>
-            </p>
-          </div>
-          <div className={styles.chart}>
-            {chartData.map((point) => (
-              <div key={point.label} className={styles.chartColumn}>
-                <div
-                  aria-label={`${point.label}: ${point.value}%`}
-                  className={styles.chartBar}
-                  style={{ height: `${point.value}%` }}
-                />
-                <span className={styles.chartLabel}>{point.label}</span>
-              </div>
-            ))}
-          </div>
-        </article>
-
-        <article className={styles.panel}>
-          <div>
-            <h2 className={styles.panelTitle}>Recent activity</h2>
-            <p className={styles.panelDescription}>Latest sample events</p>
-          </div>
-          <div className={styles.activityList}>
-            {activity.map((item) => (
-              <div
-                key={`${item.customer}-${item.action}`}
-                className={styles.activityRow}
-              >
+          <section className={styles.contentGrid}>
+            <article className={styles.panel}>
+              <div className={styles.panelHeader}>
                 <div>
-                  <p className={styles.activityCustomer}>{item.customer}</p>
-                  <p className={styles.activityAction}>{item.action}</p>
+                  <h2 className={styles.panelTitle}>Revenue activity</h2>
+                  <p className={styles.panelDescription}>Last 7 days</p>
                 </div>
-                <span className={styles.activityAmount}>{item.amount}</span>
+                <p className={styles.chartTotal}>
+                  {dashboardData.revenue_activity.total}
+                  <span className={styles.chartTotalLabel}>Sample total</span>
+                </p>
               </div>
-            ))}
-          </div>
-        </article>
-      </section>
+              <div className={styles.chart}>
+                {dashboardData.revenue_activity.points.map((point) => (
+                  <div key={point.label} className={styles.chartColumn}>
+                    <div
+                      aria-label={`${point.label}: ${point.value}%`}
+                      className={styles.chartBar}
+                      style={{ height: `${point.value}%` }}
+                    />
+                    <span className={styles.chartLabel}>{point.label}</span>
+                  </div>
+                ))}
+              </div>
+            </article>
+
+            <article className={styles.panel}>
+              <div>
+                <h2 className={styles.panelTitle}>Recent activity</h2>
+                <p className={styles.panelDescription}>Latest sample events</p>
+              </div>
+              <div className={styles.activityList}>
+                {dashboardData.recent_activity.map((item) => (
+                  <div
+                    key={`${item.customer}-${item.action}`}
+                    className={styles.activityRow}
+                  >
+                    <div>
+                      <p className={styles.activityCustomer}>{item.customer}</p>
+                      <p className={styles.activityAction}>{item.action}</p>
+                    </div>
+                    <span className={styles.activityAmount}>{item.amount}</span>
+                  </div>
+                ))}
+              </div>
+            </article>
+          </section>
+        </>
+      ) : (
+        <section className={styles.unavailable}>
+          <p className={styles.unavailableHeading}>
+            Dashboard data is unavailable
+          </p>
+          <p className={styles.unavailableDescription}>
+            The FastAPI service could not return the sample dashboard data.
+          </p>
+        </section>
+      )}
     </div>
   );
 };
