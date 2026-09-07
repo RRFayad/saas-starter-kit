@@ -6,6 +6,21 @@ export const cn = (...inputs: ClassValue[]): string => twMerge(clsx(inputs));
 // Identity helper that marks application class strings for Prettier sorting.
 export const tw = (classes: string): string => classes;
 
+export const capitalize = (value: string, allWords = false): string => {
+  if (!value) {
+    return value;
+  }
+
+  if (!allWords) {
+    return `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
+  }
+
+  return value
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
 type GetEnvVar = {
   (name: string): string;
   (name: string, throwErr: true): string;

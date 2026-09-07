@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-import { StartCheckout } from "@/app/checkout/start-checkout";
+import { StartCheckout } from "./start-checkout";
 import { getAvailableStripePlans } from "@/lib/stripe/config";
 import { tw } from "@/lib/utils";
 
