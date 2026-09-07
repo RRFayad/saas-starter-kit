@@ -1,5 +1,7 @@
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
+import { deleteStripeCustomer } from "@/lib/stripe";
+import { getUserByClerkId } from "@/lib/user/user";
 import { NextRequest } from "next/server";
 import { verifyWebhook } from "@clerk/nextjs/webhooks";
 import { eq } from "drizzle-orm";
@@ -53,6 +55,13 @@ const handleUserDeleted = async (user: DeletedObjectJSON) => {
   if (!user.id) {
     throw new Error("Deleted user ID not found");
   }
+
+  const dbUser = await getUserByClerkId(user.id);
+
+  if (dbUser?.stripeCustomerId) {
+    await deleteStripeCustomer(dbUser.stripeCustomerId);
+  }
+
   await db.delete(users).where(eq(users.clerkId, user.id));
 };
 

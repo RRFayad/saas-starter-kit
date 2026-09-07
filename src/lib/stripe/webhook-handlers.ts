@@ -50,6 +50,11 @@ export const handleSubscriptionUpsert = async (
   });
 
   if (!dbUser) {
+    if (event.type === "customer.subscription.deleted") {
+      // Customer deletion cancels subscriptions after the local user is removed.
+      return;
+    }
+
     throw new Error(
       `Application user not found for Stripe customer: ${stripeCustomerId}`,
     );

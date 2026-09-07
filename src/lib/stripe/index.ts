@@ -25,6 +25,10 @@ export const createStripeCustomer = async (user: User) => {
   return stripeCustomer;
 };
 
+export const deleteStripeCustomer = async (customerId: string) => {
+  await stripe.customers.del(customerId);
+};
+
 export const createStripeCheckoutSession = async ({
   priceId,
   user,
