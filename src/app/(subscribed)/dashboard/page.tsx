@@ -1,4 +1,4 @@
-import { Overview } from "@/components/app/overview";
+import { Overview } from "@/components/subscribed/overview";
 import { requireCurrentUserSubscriptionPlan } from "@/lib/subscription/subscription";
 import { SubscriptionPlan } from "@/types/database";
 

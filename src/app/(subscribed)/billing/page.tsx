@@ -1,4 +1,4 @@
-import { Billing } from "@/components/app/billing";
+import { Billing } from "@/components/subscribed/billing";
 import {
   getCurrentUserSubscription,
   requireCurrentUserSubscriptionPlan,

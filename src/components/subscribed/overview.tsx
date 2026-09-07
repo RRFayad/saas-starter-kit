@@ -7,6 +7,7 @@ import {
   UsersIcon,
 } from "lucide-react";
 
+import { PageHeader } from "@/components/subscribed/page-header";
 import { tw } from "@/lib/utils";
 
 const metrics = [
@@ -59,12 +60,6 @@ const activity = [
 
 const styles = {
   page: tw("mx-auto w-full max-w-7xl space-y-8"),
-  headingRow: tw(
-    "flex flex-col justify-between gap-4 sm:flex-row sm:items-end",
-  ),
-  eyebrow: tw("text-sm font-medium text-primary"),
-  heading: tw("mt-1 text-3xl font-semibold tracking-tight"),
-  description: tw("mt-2 text-sm text-muted-foreground"),
   sampleBadge: tw(
     "w-fit rounded-full border border-dashed bg-muted/60 px-3 py-1 text-xs text-muted-foreground",
   ),
@@ -105,17 +100,12 @@ const styles = {
 export const Overview = () => {
   return (
     <div className={styles.page}>
-      <section className={styles.headingRow}>
-        <div>
-          <p className={styles.eyebrow}>Overview</p>
-          <h1 className={styles.heading}>Your business at a glance.</h1>
-          <p className={styles.description}>
-            A sample dashboard showing the kind of product UI this starter can
-            support.
-          </p>
-        </div>
-        <span className={styles.sampleBadge}>Sample data</span>
-      </section>
+      <PageHeader
+        eyebrow="Overview"
+        title="Your business at a glance."
+        description="A sample dashboard showing the kind of product UI this starter can support."
+        action={<span className={styles.sampleBadge}>Sample data</span>}
+      />
 
       <section className={styles.metrics} aria-label="Sample metrics">
         {metrics.map((metric) => {

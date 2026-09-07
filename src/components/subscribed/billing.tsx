@@ -1,6 +1,7 @@
 import { ArrowUpRightIcon, CalendarIcon } from "lucide-react";
 
 import { customerPortal } from "@/actions/stripe";
+import { PageHeader } from "@/components/subscribed/page-header";
 import { Button } from "@/components/ui/button";
 import { capitalize, tw } from "@/lib/utils";
 import type { Subscription, SubscriptionPlan } from "@/types/database";
@@ -27,10 +28,7 @@ const formatInterval = (interval: string): string =>
   interval.charAt(0).toUpperCase() + interval.slice(1);
 
 const styles = {
-  page: tw("mx-auto w-full max-w-4xl space-y-8"),
-  eyebrow: tw("text-sm font-medium text-primary"),
-  heading: tw("mt-1 text-3xl font-semibold tracking-tight"),
-  description: tw("mt-2 max-w-2xl text-sm text-muted-foreground"),
+  page: tw("mx-auto w-full max-w-7xl space-y-8"),
   card: tw("rounded-xl border bg-card p-6 shadow-sm"),
   cardHeader: tw(
     "flex flex-col justify-between gap-4 sm:flex-row sm:items-start",
@@ -58,10 +56,7 @@ export const Billing = ({ subscription }: BillingProps) => {
   if (!subscription) {
     return (
       <div className={styles.page}>
-        <section>
-          <p className={styles.eyebrow}>Billing</p>
-          <h1 className={styles.heading}>Subscription and billing.</h1>
-        </section>
+        <PageHeader eyebrow="Billing" title="Subscription and billing." />
         <div className={styles.empty}>
           <p className={styles.emptyHeading}>No current subscription</p>
           <p className={styles.emptyDescription}>
@@ -76,14 +71,11 @@ export const Billing = ({ subscription }: BillingProps) => {
 
   return (
     <div className={styles.page}>
-      <section>
-        <p className={styles.eyebrow}>Billing</p>
-        <h1 className={styles.heading}>Subscription and billing.</h1>
-        <p className={styles.description}>
-          Your subscription state is synchronized from Stripe and stored locally
-          for authorization.
-        </p>
-      </section>
+      <PageHeader
+        eyebrow="Billing"
+        title="Subscription and billing."
+        description="Your subscription state is synchronized from Stripe and stored locally for authorization."
+      />
 
       <section className={styles.card}>
         <div className={styles.cardHeader}>

@@ -1,12 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, useUser } from "@clerk/nextjs";
 import {
   CreditCardIcon,
   LayoutDashboardIcon,
   SparklesIcon,
-  StarIcon,
   UserRoundIcon,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -44,10 +43,6 @@ const navigation = [
   },
 ];
 
-type AppSidebarProps = {
-  githubUrl: string;
-};
-
 const styles = {
   brand: tw(
     "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold",
@@ -57,13 +52,14 @@ const styles = {
   account: tw("flex items-center gap-2 rounded-md px-2 py-1.5"),
   accountContent: tw("min-w-0 group-data-[collapsible=icon]:hidden"),
   accountLabel: tw("truncate text-sm font-medium text-sidebar-foreground"),
-  accountHint: tw("mt-0.5 text-xs text-sidebar-foreground/60"),
-  footerMenu: tw("mt-2"),
-  footerIcon: tw("size-4"),
+  accountEmail: tw("mt-0.5 truncate text-xs text-sidebar-foreground/60"),
 };
 
-export const AppSidebar = ({ githubUrl }: AppSidebarProps) => {
+export const AppSidebar = () => {
   const pathname = usePathname();
+  const { user } = useUser();
+  const accountName = user?.fullName ?? user?.firstName ?? "Signed in";
+  const accountEmail = user?.primaryEmailAddress?.emailAddress;
 
   return (
     <Sidebar collapsible="icon">
@@ -98,22 +94,12 @@ export const AppSidebar = ({ githubUrl }: AppSidebarProps) => {
         <div className={styles.account}>
           <UserButton />
           <div className={styles.accountContent}>
-            <p className={styles.accountLabel}>Account</p>
+            <p className={styles.accountLabel}>{accountName}</p>
+            {accountEmail && (
+              <p className={styles.accountEmail}>{accountEmail}</p>
+            )}
           </div>
         </div>
-        {githubUrl && (
-          <SidebarMenu className={styles.footerMenu}>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                render={<a href={githubUrl} rel="noopener" target="_blank" />}
-                tooltip="View on GitHub"
-              >
-                <StarIcon className={styles.footerIcon} />
-                <span>View on GitHub</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        )}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

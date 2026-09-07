@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
+import { StarIcon } from "lucide-react";
 
 import { AppSidebar } from "@/components/app-sidebar";
+import { Button } from "@/components/ui/button";
 import {
   SidebarInset,
   SidebarProvider,
@@ -19,6 +21,7 @@ type SubscribedLayoutProps = {
 const styles = {
   inset: tw("min-h-svh"),
   header: tw("flex h-14 items-center justify-between border-b px-4 lg:px-6"),
+  headerActions: tw("flex items-center gap-2"),
   content: tw("flex-1 p-4 lg:p-6"),
 };
 
@@ -27,11 +30,21 @@ const SubscribedLayout = async ({ children }: SubscribedLayoutProps) => {
 
   return (
     <SidebarProvider>
-      <AppSidebar githubUrl={siteConfig.github} />
+      <AppSidebar />
       <SidebarInset className={styles.inset}>
         <header className={styles.header}>
           <SidebarTrigger />
-          <ThemeToggle />
+          <div className={styles.headerActions}>
+            <ThemeToggle />
+            {siteConfig.github && (
+              <Button variant="ghost" size="sm" asChild>
+                <a href={siteConfig.github} rel="noopener" target="_blank">
+                  <StarIcon />
+                  View on GitHub
+                </a>
+              </Button>
+            )}
+          </div>
         </header>
         <div className={styles.content}>{children}</div>
       </SidebarInset>
