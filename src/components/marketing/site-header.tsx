@@ -26,10 +26,10 @@ export const SiteHeader = () => {
           Full-Stack SaaS Starter Kit
         </Link>
         <nav className={styles.navigation}>
-          <Link href="/components" className={styles.navigationLink}>
+          <Link href="/sign-in" className={styles.navigationLink}>
             Sign In
           </Link>
-          <Link href="/themes" className={styles.navigationLink}>
+          <Link href="/sign-up" className={styles.navigationLink}>
             Sign Up
           </Link>
         </nav>

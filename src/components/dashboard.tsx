@@ -1,3 +1,5 @@
+import { UserButton } from "@clerk/nextjs";
+
 import type { DashboardData } from "@/lib/backend/dashboard";
 import type { HealthStatus } from "@/lib/backend/system";
 
@@ -14,6 +16,7 @@ export const Dashboard = ({ healthStatus, dashboardData }: DashboardProps) => {
       {dashboardData && (
         <p>Dashboard Protected Data: {dashboardData.dashboard}</p>
       )}
+      <UserButton />
     </>
   );
 };

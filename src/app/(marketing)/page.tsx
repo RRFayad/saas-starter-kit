@@ -30,6 +30,7 @@ import { SpotlightCard } from "@/components/velora/spotlight-card";
 import { TextReveal } from "@/components/velora/text-reveal";
 import { TiltCard } from "@/components/velora/tilt-card";
 import { Typewriter } from "@/components/velora/typewriter";
+import { siteConfig } from "@/lib/site-config";
 import { getAvailableStripePlans } from "@/lib/stripe/config";
 
 const stats = [
@@ -225,13 +226,19 @@ const LandingPage = () => {
 
           <BlurFade delay={0.5}>
             <div className={styles.hero.actions}>
-              <ShimmerButton>
-                <RocketIcon className={styles.hero.actionIcon} />
-                View Live Demo
-              </ShimmerButton>
-              <Button variant="ghost" size="lg" asChild>
-                <a href="#features">View on Github</a>
-              </Button>
+              <form action="/sign-up">
+                <ShimmerButton type="submit">
+                  <RocketIcon className={styles.hero.actionIcon} />
+                  View Live Demo
+                </ShimmerButton>
+              </form>
+              {siteConfig.github && (
+                <Button variant="ghost" size="lg" asChild>
+                  <a href={siteConfig.github} rel="noopener" target="_blank">
+                    View on Github
+                  </a>
+                </Button>
+              )}
             </div>
           </BlurFade>
 
@@ -471,10 +478,15 @@ const LandingPage = () => {
               billing, persistence, and backend integration already connected.
             </p>
             <div className={styles.callToAction.action}>
-              <ShimmerButton className={styles.callToAction.button}>
-                <RocketIcon className={styles.callToAction.buttonIcon} />
-                View Live Demo
-              </ShimmerButton>
+              <form action="/sign-up">
+                <ShimmerButton
+                  className={styles.callToAction.button}
+                  type="submit"
+                >
+                  <RocketIcon className={styles.callToAction.buttonIcon} />
+                  View Live Demo
+                </ShimmerButton>
+              </form>
             </div>
           </BlurFade>
         </div>
