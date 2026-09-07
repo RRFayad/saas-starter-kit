@@ -4,13 +4,14 @@ import { startTransition, useEffect, useRef } from "react";
 
 import { checkout } from "@/actions/stripe";
 import type { SubscriptionPlan } from "@/types/database";
+import { tw } from "@/lib/utils";
 
 type StartCheckoutProps = {
   plan: SubscriptionPlan;
 };
 
 const styles = {
-  message: "text-sm text-muted-foreground",
+  message: tw("text-sm text-muted-foreground"),
 };
 
 export const StartCheckout = ({ plan }: StartCheckoutProps) => {

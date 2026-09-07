@@ -2,11 +2,14 @@ import Link from "next/link";
 
 import { RedirectAfterDelay } from "@/components/payment/redirect-after-delay";
 import { Button } from "@/components/ui/button";
+import { tw } from "@/lib/utils";
 
 const styles = {
-  page: "flex min-h-screen flex-col items-center justify-center gap-4 px-4 text-center",
-  heading: "text-3xl font-semibold tracking-tight",
-  description: "max-w-md text-muted-foreground",
+  page: tw(
+    "flex min-h-screen flex-col items-center justify-center gap-4 px-4 text-center",
+  ),
+  heading: tw("text-3xl font-semibold tracking-tight"),
+  description: tw("max-w-md text-muted-foreground"),
 };
 
 const Cancelled = () => {

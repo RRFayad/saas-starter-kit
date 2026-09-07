@@ -1,11 +1,12 @@
 import { PricingCards } from "@/components/marketing/pricing-cards";
 import { getAvailableStripePlans } from "@/lib/stripe/config";
+import { tw } from "@/lib/utils";
 
 const styles = {
-  page: "py-24",
-  content: "mx-auto max-w-6xl px-4 lg:px-8",
-  heading: "text-center text-4xl font-semibold tracking-tight",
-  description: "mx-auto mt-4 max-w-xl text-center text-muted-foreground",
+  page: tw("py-24"),
+  content: tw("mx-auto max-w-6xl px-4 lg:px-8"),
+  heading: tw("text-center text-4xl font-semibold tracking-tight"),
+  description: tw("mx-auto mt-4 max-w-xl text-center text-muted-foreground"),
 };
 
 const PricingPage = () => {

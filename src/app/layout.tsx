@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import "./globals.css";
+import { tw } from "@/lib/utils";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -15,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 const styles = {
-  html: `${geistSans.variable} ${geistMono.variable} h-full antialiased`,
-  body: "min-h-full flex flex-col",
+  html: tw(`${geistSans.variable} ${geistMono.variable} h-full antialiased`),
+  body: tw("flex min-h-full flex-col"),
 };
 
 export const metadata: Metadata = {

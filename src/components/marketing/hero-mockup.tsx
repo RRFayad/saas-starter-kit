@@ -13,7 +13,7 @@ import {
 import { BorderBeam } from "@/components/velora/border-beam";
 import { BrowserMockup } from "@/components/velora/browser-mockup";
 import { NumberTicker } from "@/components/velora/number-ticker";
-import { cn } from "@/lib/utils";
+import { cn, tw } from "@/lib/utils";
 
 const navItems = [
   { icon: LayoutDashboardIcon, label: "Overview", active: true },
@@ -39,34 +39,43 @@ const stats = [
 const bars = [38, 62, 48, 74, 56, 88, 66, 92, 60, 78, 84, 98];
 
 const styles = {
-  root: "relative mx-auto w-full max-w-5xl",
-  glow: "absolute -inset-8 rounded-[2rem] bg-gradient-to-r from-brand-from via-brand-via to-brand-to opacity-20 blur-3xl",
-  browser: "relative",
-  dashboard: "flex",
-  sidebar: "hidden w-44 flex-col gap-1 border-r border-border/60 p-3 md:flex",
-  sidebarItem: "flex items-center gap-2 rounded-lg px-3 py-2 text-xs",
-  sidebarItemActive: "bg-primary/10 font-medium text-primary",
-  sidebarItemInactive: "text-muted-foreground",
-  sidebarIcon: "size-3.5",
-  content: "flex-1 p-4 lg:p-6",
-  contentHeader: "mb-4 flex items-center justify-between",
-  contentTitle: "text-sm font-semibold",
-  period:
+  root: tw("relative mx-auto w-full max-w-5xl"),
+  glow: tw(
+    "absolute -inset-8 rounded-[2rem] bg-gradient-to-r from-brand-from via-brand-via to-brand-to opacity-20 blur-3xl",
+  ),
+  browser: tw("relative"),
+  dashboard: tw("flex"),
+  sidebar: tw(
+    "hidden w-44 flex-col gap-1 border-r border-border/60 p-3 md:flex",
+  ),
+  sidebarItem: tw("flex items-center gap-2 rounded-lg px-3 py-2 text-xs"),
+  sidebarItemActive: tw("bg-primary/10 font-medium text-primary"),
+  sidebarItemInactive: tw("text-muted-foreground"),
+  sidebarIcon: tw("size-3.5"),
+  content: tw("flex-1 p-4 lg:p-6"),
+  contentHeader: tw("mb-4 flex items-center justify-between"),
+  contentTitle: tw("text-sm font-semibold"),
+  period: tw(
     "rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground",
-  statsGrid: "grid grid-cols-3 gap-3",
-  statCard: "rounded-xl border border-border/60 bg-background/40 p-3 lg:p-4",
-  statLabel: "text-[11px] text-muted-foreground",
-  statValue: "mt-1 text-base font-semibold lg:text-xl",
-  statChange:
+  ),
+  statsGrid: tw("grid grid-cols-3 gap-3"),
+  statCard: tw(
+    "rounded-xl border border-border/60 bg-background/40 p-3 lg:p-4",
+  ),
+  statLabel: tw("text-[11px] text-muted-foreground"),
+  statValue: tw("mt-1 text-base font-semibold lg:text-xl"),
+  statChange: tw(
     "mt-1 inline-flex items-center gap-1 text-[11px] text-emerald-500",
-  statChangeIcon: "size-3",
-  chart: "mt-3 rounded-xl border border-border/60 bg-background/40 p-4",
-  chartHeader: "mb-3 flex items-center justify-between",
-  chartTitle: "text-xs font-medium",
-  chartYear: "text-[11px] text-muted-foreground",
-  chartBars: "flex h-32 items-end gap-2 lg:h-40",
-  chartBar:
+  ),
+  statChangeIcon: tw("size-3"),
+  chart: tw("mt-3 rounded-xl border border-border/60 bg-background/40 p-4"),
+  chartHeader: tw("mb-3 flex items-center justify-between"),
+  chartTitle: tw("text-xs font-medium"),
+  chartYear: tw("text-[11px] text-muted-foreground"),
+  chartBars: tw("flex h-32 items-end gap-2 lg:h-40"),
+  chartBar: tw(
     "flex-1 origin-bottom rounded-t-sm bg-gradient-to-t from-brand-from to-brand-via",
+  ),
 };
 
 /**

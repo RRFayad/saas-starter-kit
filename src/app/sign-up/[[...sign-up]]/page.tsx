@@ -1,7 +1,8 @@
 import { SignUp } from "@clerk/nextjs";
+import { tw } from "@/lib/utils";
 
 const styles = {
-  page: "flex min-h-screen items-center justify-center",
+  page: tw("flex min-h-screen items-center justify-center"),
 };
 
 const SignUpPage = () => {

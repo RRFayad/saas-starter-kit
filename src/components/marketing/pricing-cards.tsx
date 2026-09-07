@@ -7,34 +7,38 @@ import { BorderBeam } from "@/components/velora/border-beam";
 import { BlurFade } from "@/components/velora/blur-fade";
 import { ShimmerButton } from "@/components/velora/shimmer-button";
 import type { AvailableStripePlan } from "@/lib/stripe/config";
+import { tw } from "@/lib/utils";
 
 type PricingCardsProps = {
   plans: AvailableStripePlan[];
 };
 
 const styles = {
-  grid: "mx-auto mt-16 grid gap-6",
-  onePlan: "max-w-sm",
-  twoPlans: "max-w-4xl md:grid-cols-2",
-  threePlans: "max-w-6xl md:grid-cols-2 xl:grid-cols-3",
-  card: "flex h-full flex-col rounded-2xl border bg-card p-8",
-  popularCard:
+  grid: tw("mx-auto mt-16 grid gap-6"),
+  onePlan: tw("max-w-sm"),
+  twoPlans: tw("max-w-4xl md:grid-cols-2"),
+  threePlans: tw("max-w-6xl md:grid-cols-2 xl:grid-cols-3"),
+  card: tw("flex h-full flex-col rounded-2xl border bg-card p-8"),
+  popularCard: tw(
     "relative flex h-full flex-col overflow-hidden rounded-2xl border bg-card p-8",
-  header: "flex items-center justify-between",
-  planName: "text-lg font-semibold",
-  popularPlanName: "text-lg font-semibold text-primary",
-  popularBadge:
+  ),
+  header: tw("flex items-center justify-between"),
+  planName: tw("text-lg font-semibold"),
+  popularPlanName: tw("text-lg font-semibold text-primary"),
+  popularBadge: tw(
     "rounded-full bg-primary/15 px-3 py-1 text-xs font-medium text-primary",
-  description: "mt-2 text-sm text-muted-foreground",
-  price: "mt-6 text-5xl font-semibold tracking-tight",
-  interval: "text-base font-normal text-muted-foreground",
-  features: "mt-8 flex-1 space-y-3 text-sm",
-  feature: "flex items-center gap-3",
-  featureIcon:
+  ),
+  description: tw("mt-2 text-sm text-muted-foreground"),
+  price: tw("mt-6 text-5xl font-semibold tracking-tight"),
+  interval: tw("text-base font-normal text-muted-foreground"),
+  features: tw("mt-8 flex-1 space-y-3 text-sm"),
+  feature: tw("flex items-center gap-3"),
+  featureIcon: tw(
     "flex size-5 items-center justify-center rounded-full bg-primary/15 text-primary",
-  checkIcon: "size-3",
-  button: "mt-8 w-full rounded-full",
-  popularButton: "mt-8 w-full",
+  ),
+  checkIcon: tw("size-3"),
+  button: tw("mt-8 w-full rounded-full"),
+  popularButton: tw("mt-8 w-full"),
 };
 
 const getGridStyles = (planCount: number): string => {
@@ -95,11 +99,7 @@ export const PricingCards = ({ plans }: PricingCardsProps) => {
                     Get started
                   </ShimmerButton>
                 ) : (
-                  <Button
-                    className={styles.button}
-                    size="lg"
-                    variant="outline"
-                  >
+                  <Button className={styles.button} size="lg" variant="outline">
                     Get started
                   </Button>
                 )}

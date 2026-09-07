@@ -1,9 +1,10 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+export const cn = (...inputs: ClassValue[]): string => twMerge(clsx(inputs));
+
+// Identity helper that marks application class strings for Prettier sorting.
+export const tw = (classes: string): string => classes;
 
 type GetEnvVar = {
   (name: string): string;
@@ -11,10 +12,7 @@ type GetEnvVar = {
   (name: string, throwErr: false): string | null;
 };
 
-export const getEnvVar = ((
-  name: string,
-  throwErr = true,
-): string | null => {
+export const getEnvVar = ((name: string, throwErr = true): string | null => {
   const value = process.env[name];
 
   if (!value) {

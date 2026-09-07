@@ -3,13 +3,14 @@ import { redirect } from "next/navigation";
 
 import { StartCheckout } from "@/app/checkout/start-checkout";
 import { getAvailableStripePlans } from "@/lib/stripe/config";
+import { tw } from "@/lib/utils";
 
 type CheckoutPageProps = {
   searchParams: Promise<{ plan?: string | string[] }>;
 };
 
 const styles = {
-  page: "flex min-h-screen items-center justify-center px-4",
+  page: tw("flex min-h-screen items-center justify-center px-4"),
 };
 
 const CheckoutPage = async ({ searchParams }: CheckoutPageProps) => {

@@ -12,17 +12,21 @@ import {
 } from "lucide-react";
 
 import { AnimatedBeam } from "@/components/velora/animated-beam";
-import { cn } from "@/lib/utils";
+import { cn, tw } from "@/lib/utils";
 
 const styles = {
-  node: "z-10 flex size-13 items-center justify-center rounded-full border bg-card shadow-lg [&_svg]:size-5",
-  container:
+  node: tw(
+    "z-10 flex size-13 items-center justify-center rounded-full border bg-card shadow-lg [&_svg]:size-5",
+  ),
+  container: tw(
     "relative flex h-96 w-full items-center justify-between px-2 sm:px-8",
-  nodeColumn: "flex h-full flex-col justify-between py-6",
-  mutedIcon: "text-muted-foreground",
-  centerNode:
+  ),
+  nodeColumn: tw("flex h-full flex-col justify-between py-6"),
+  mutedIcon: tw("text-muted-foreground"),
+  centerNode: tw(
     "size-18 border-primary/40 bg-primary/10 shadow-primary/20 [&_svg]:size-8",
-  primaryIcon: "text-primary",
+  ),
+  primaryIcon: tw("text-primary"),
 };
 
 const Node = ({

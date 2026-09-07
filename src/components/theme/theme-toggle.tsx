@@ -4,10 +4,11 @@ import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
+import { tw } from "@/lib/utils";
 
 const styles = {
-  sunIcon: "hidden dark:block",
-  moonIcon: "dark:hidden",
+  sunIcon: tw("hidden dark:block"),
+  moonIcon: tw("dark:hidden"),
 };
 
 /**

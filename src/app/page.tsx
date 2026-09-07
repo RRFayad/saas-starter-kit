@@ -36,6 +36,7 @@ import { TiltCard } from "@/components/velora/tilt-card";
 import { Typewriter } from "@/components/velora/typewriter";
 import { siteConfig } from "@/lib/site-config";
 import { getAvailableStripePlans } from "@/lib/stripe/config";
+import { tw } from "@/lib/utils";
 
 const stats = [
   { value: 8, suffix: "h", prefix: "", label: "saved with payments" },
@@ -103,89 +104,104 @@ const faqs = [
 const availablePlans = getAvailableStripePlans();
 
 const styles = {
-  page: "relative",
-  section: "relative py-16 lg:py-24",
-  content: "mx-auto max-w-6xl px-4 lg:px-8",
-  sectionHeading:
+  page: tw("relative"),
+  section: tw("relative py-16 lg:py-24"),
+  content: tw("mx-auto max-w-6xl px-4 lg:px-8"),
+  sectionHeading: tw(
     "mx-auto max-w-2xl text-center text-3xl font-semibold tracking-tight text-balance lg:text-5xl",
-  sectionDescription: "mx-auto mt-4 max-w-xl text-center text-muted-foreground",
-  accent: "text-primary",
-  featureCheck:
+  ),
+  sectionDescription: tw(
+    "mx-auto mt-4 max-w-xl text-center text-muted-foreground",
+  ),
+  accent: tw("text-primary"),
+  featureCheck: tw(
     "flex size-5 items-center justify-center rounded-full bg-primary/15 text-primary",
-  featureCheckIcon: "size-3",
+  ),
+  featureCheckIcon: tw("size-3"),
   hero: {
-    section: "relative overflow-hidden pt-40 pb-24 lg:pt-48 lg:pb-28",
-    gridPattern:
-      "fill-transparent stroke-border/60 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]",
-    content: "relative mx-auto max-w-6xl px-4 text-center lg:px-8",
-    badge:
+    section: tw("relative overflow-hidden pt-40 pb-24 lg:pt-48 lg:pb-28"),
+    gridPattern: tw(
+      "[mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)] fill-transparent stroke-border/60",
+    ),
+    content: tw("relative mx-auto max-w-6xl px-4 text-center lg:px-8"),
+    badge: tw(
       "inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 px-4 py-1.5 text-sm backdrop-blur",
-    badgeIcon: "size-3.5 text-primary",
-    badgeText: "font-medium",
-    title:
+    ),
+    badgeIcon: tw("size-3.5 text-primary"),
+    badgeText: tw("font-medium"),
+    title: tw(
       "mx-auto mt-8 max-w-4xl text-5xl font-semibold tracking-tight text-balance lg:text-7xl",
-    description:
-      "mx-auto mt-6 max-w-2xl text-lg text-muted-foreground text-pretty",
-    actions: "mt-10 flex flex-wrap items-center justify-center gap-4",
-    actionIcon: "size-4",
-    socialProof:
+    ),
+    description: tw(
+      "mx-auto mt-6 max-w-2xl text-lg text-pretty text-muted-foreground",
+    ),
+    actions: tw("mt-10 flex flex-wrap items-center justify-center gap-4"),
+    actionIcon: tw("size-4"),
+    socialProof: tw(
       "mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row",
-    socialProofContent: "flex flex-col items-center gap-0.5 sm:items-start",
-    socialProofStars: "flex gap-0.5 text-amber-400",
-    socialProofStar: "size-4 fill-current",
-    socialProofText: "text-sm text-muted-foreground",
-    mockup: "mt-20",
-    stats: "mx-auto mt-20 grid max-w-4xl grid-cols-2 gap-8 lg:grid-cols-4",
-    stat: "flex flex-col items-center gap-1",
-    statValue: "text-4xl font-semibold tracking-tight",
-    statLabel: "text-sm text-muted-foreground",
+    ),
+    socialProofContent: tw("flex flex-col items-center gap-0.5 sm:items-start"),
+    socialProofStars: tw("flex gap-0.5 text-amber-400"),
+    socialProofStar: tw("size-4 fill-current"),
+    socialProofText: tw("text-sm text-muted-foreground"),
+    mockup: tw("mt-20"),
+    stats: tw("mx-auto mt-20 grid max-w-4xl grid-cols-2 gap-8 lg:grid-cols-4"),
+    stat: tw("flex flex-col items-center gap-1"),
+    statValue: tw("text-4xl font-semibold tracking-tight"),
+    statLabel: tw("text-sm text-muted-foreground"),
   },
   integrations: {
-    content:
+    content: tw(
       "mx-auto grid max-w-6xl items-center gap-12 px-4 lg:grid-cols-2 lg:gap-20 lg:px-8",
-    eyebrow: "text-sm font-medium text-primary",
-    title:
+    ),
+    eyebrow: tw("text-sm font-medium text-primary"),
+    title: tw(
       "mt-3 text-3xl font-semibold tracking-tight text-balance lg:text-4xl",
-    description: "mt-4 text-muted-foreground",
-    list: "mt-6 space-y-3 text-sm",
-    listItem: "flex items-center gap-3",
+    ),
+    description: tw("mt-4 text-muted-foreground"),
+    list: tw("mt-6 space-y-3 text-sm"),
+    listItem: tw("flex items-center gap-3"),
   },
   cards: {
-    grid: "grid gap-6 md:grid-cols-3",
-    card: "h-full p-8",
-    icon: "size-6",
-    iconContainer: "mb-4 w-fit rounded-xl bg-primary/10 p-3 text-primary",
-    title: "text-lg font-semibold",
-    description: "mt-2 text-sm text-muted-foreground",
+    grid: tw("grid gap-6 md:grid-cols-3"),
+    card: tw("h-full p-8"),
+    icon: tw("size-6"),
+    iconContainer: tw("mb-4 w-fit rounded-xl bg-primary/10 p-3 text-primary"),
+    title: tw("text-lg font-semibold"),
+    description: tw("mt-2 text-sm text-muted-foreground"),
   },
   testimonials: {
-    grid: "mt-16 columns-1 gap-6 md:columns-2 lg:columns-3 [&>*]:mb-6",
-    item: "break-inside-avoid",
-    card: "rounded-2xl border bg-card p-6",
-    stars: "flex gap-0.5 text-amber-400",
-    star: "size-3.5 fill-current",
-    quote: "mt-4 text-sm text-card-foreground",
-    figcaption: "mt-4 flex items-center gap-3",
-    avatar: "[&>span]:size-8 [&>span]:text-[10px]",
-    name: "text-sm font-medium",
-    role: "text-xs text-muted-foreground",
+    grid: tw("mt-16 columns-1 gap-6 md:columns-2 lg:columns-3 [&>*]:mb-6"),
+    item: tw("break-inside-avoid"),
+    card: tw("rounded-2xl border bg-card p-6"),
+    stars: tw("flex gap-0.5 text-amber-400"),
+    star: tw("size-3.5 fill-current"),
+    quote: tw("mt-4 text-sm text-card-foreground"),
+    figcaption: tw("mt-4 flex items-center gap-3"),
+    avatar: tw("[&>span]:size-8 [&>span]:text-[10px]"),
+    name: tw("text-sm font-medium"),
+    role: tw("text-xs text-muted-foreground"),
   },
   faq: {
-    section: "py-16 lg:py-24",
-    container: "mx-auto max-w-3xl px-4 lg:px-8",
-    heading: "text-center text-3xl font-semibold tracking-tight lg:text-4xl",
-    accordion: "mt-12",
-    trigger: "text-left text-base",
-    answer: "text-muted-foreground",
+    section: tw("py-16 lg:py-24"),
+    container: tw("mx-auto max-w-3xl px-4 lg:px-8"),
+    heading: tw(
+      "text-center text-3xl font-semibold tracking-tight lg:text-4xl",
+    ),
+    accordion: tw("mt-12"),
+    trigger: tw("text-left text-base"),
+    answer: tw("text-muted-foreground"),
   },
   callToAction: {
-    section: "relative overflow-hidden py-16 lg:py-24",
-    content: "relative mx-auto max-w-4xl px-4 text-center lg:px-8",
-    heading: "text-4xl font-semibold tracking-tight text-balance lg:text-6xl",
-    description: "mx-auto mt-6 max-w-xl text-lg text-muted-foreground",
-    action: "mt-10",
-    button: "h-14 px-10 text-base",
-    buttonIcon: "size-5",
+    section: tw("relative overflow-hidden py-16 lg:py-24"),
+    content: tw("relative mx-auto max-w-4xl px-4 text-center lg:px-8"),
+    heading: tw(
+      "text-4xl font-semibold tracking-tight text-balance lg:text-6xl",
+    ),
+    description: tw("mx-auto mt-6 max-w-xl text-lg text-muted-foreground"),
+    action: tw("mt-10"),
+    button: tw("h-14 px-10 text-base"),
+    buttonIcon: tw("size-5"),
   },
 };
 

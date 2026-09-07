@@ -5,17 +5,22 @@ import { SparklesIcon, StarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { siteConfig } from "@/lib/site-config";
+import { tw } from "@/lib/utils";
 
 const styles = {
-  header:
+  header: tw(
     "fixed inset-x-0 top-0 z-50 border-b border-border/40 bg-background/70 backdrop-blur-xl",
-  content:
+  ),
+  content: tw(
     "mx-auto flex h-16 max-w-6xl items-center justify-between px-4 lg:px-8",
-  brand: "flex items-center gap-2 font-semibold",
-  brandIcon: "size-5 text-primary",
-  navigation: "hidden items-center gap-6 text-sm text-muted-foreground md:flex",
-  navigationLink: "transition-colors hover:text-foreground",
-  actions: "flex items-center gap-2",
+  ),
+  brand: tw("flex items-center gap-2 font-semibold"),
+  brandIcon: tw("size-5 text-primary"),
+  navigation: tw(
+    "hidden items-center gap-6 text-sm text-muted-foreground md:flex",
+  ),
+  navigationLink: tw("transition-colors hover:text-foreground"),
+  actions: tw("flex items-center gap-2"),
 };
 
 export const SiteHeader = () => {
