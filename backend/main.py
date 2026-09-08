@@ -1,10 +1,10 @@
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .auth.subscription import require_subscription_plan
-from .db.models import SubscriptionPlan
-from .routers import dashboard
-from .utils import get_env_var
+from auth.subscription import require_subscription_plan
+from db.models import SubscriptionPlan
+from routers import dashboard
+from utils import get_env_var
 
 frontend_url = get_env_var("FRONTEND_URL")
 

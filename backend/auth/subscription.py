@@ -2,9 +2,9 @@ from fastapi import HTTPException
 from sqlalchemy import select
 from starlette import status
 
-from ..db.database import db_dependency
-from ..db.models import Subscription, SubscriptionPlan
-from .auth import current_user_dependency
+from auth.auth import current_user_dependency
+from db.database import db_dependency
+from db.models import Subscription, SubscriptionPlan
 
 SUBSCRIPTION_PLAN_LEVELS = {
     SubscriptionPlan.BASIC: 1,

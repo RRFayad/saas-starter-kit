@@ -4,7 +4,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from starlette import status
 
-from ..auth.auth import current_user_dependency
+from auth.auth import current_user_dependency
 
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
@@ -34,7 +34,7 @@ class DashboardActivity(BaseModel):
 
 
 class DashboardData(BaseModel):
-    user_name: str | None
+    user_email: str
     metrics: list[DashboardMetric]
     revenue_activity: DashboardRevenueActivity
     recent_activity: list[DashboardActivity]
@@ -43,7 +43,7 @@ class DashboardData(BaseModel):
 @router.get("/", response_model=DashboardData, status_code=status.HTTP_200_OK)
 def get_dashboard_data(user: current_user_dependency) -> DashboardData:
     return DashboardData(
-        user_name=user.name,
+        user_email=user.email,
         metrics=[
             DashboardMetric(
                 label="Monthly revenue",

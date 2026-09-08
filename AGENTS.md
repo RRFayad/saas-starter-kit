@@ -63,6 +63,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 ## Backend Conventions
 
 - Python dependencies and tooling are managed with `uv` in `backend/`.
+- `backend/` is an independently deployed Vercel project root. Import backend
+  modules from that root, such as `from auth.auth import ...`; do not import
+  them through `backend.*` or use relative imports that escape a subpackage.
+- Start FastAPI from `backend/` with
+  `uv run uvicorn main:app --reload --env-file .env`.
 - Format Python with Black and sort imports with isort.
 - Place product API routes in `backend/routers/`; keep authentication and
   subscription dependencies under `backend/auth/`.

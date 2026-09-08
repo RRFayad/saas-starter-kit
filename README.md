@@ -340,10 +340,11 @@ Commit generated migrations with the schema change.
 
 ### 7. Start the Application
 
-Start FastAPI from the repository root:
+Start FastAPI from the backend directory:
 
 ```bash
-uv run --project backend uvicorn backend.main:app --reload --env-file backend/.env
+cd backend
+uv run uvicorn main:app --reload --env-file .env
 ```
 
 In a second terminal, start Next.js:

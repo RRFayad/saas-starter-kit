@@ -8,7 +8,7 @@ export type DashboardMetricIcon =
   "revenue" | "customers" | "conversion" | "refunds";
 
 export type DashboardData = {
-  user_name: string | null;
+  user_email: string;
   metrics: {
     label: string;
     value: string;

@@ -4,7 +4,7 @@ from fastapi import Depends
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
-from ..utils import get_env_var
+from utils import get_env_var
 
 database_url = get_env_var("DATABASE_URL")
 

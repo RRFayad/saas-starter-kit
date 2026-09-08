@@ -9,9 +9,9 @@ from fastapi_clerk_auth import (
 from sqlalchemy import select
 from starlette import status
 
-from ..db.database import db_dependency
-from ..db.models import User
-from ..utils import get_env_var
+from db.database import db_dependency
+from db.models import User
+from utils import get_env_var
 
 clerk_jwks_url = get_env_var("CLERK_JWKS_URL")
 clerk_config = ClerkConfig(
