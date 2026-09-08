@@ -10,6 +10,7 @@ import {
   createStripeCustomerPortalSession,
 } from "@/lib/stripe";
 import { getOrCreateUserByClerkId, getUserByClerkId } from "@/lib/user/user";
+import { routes } from "@/lib/routes";
 import { getEnvVar } from "@/lib/utils";
 import type { SubscriptionPlan } from "@/types/database";
 
@@ -46,8 +47,8 @@ export const checkout = async (formData: FormData) => {
   const checkoutUrl = await createStripeCheckoutSession({
     priceId,
     user,
-    successUrl: `${frontendUrl}/payment/success`,
-    cancelUrl: `${frontendUrl}/payment/cancelled`,
+    successUrl: `${frontendUrl}${routes.payment.success}`,
+    cancelUrl: `${frontendUrl}${routes.payment.cancelled}`,
   });
 
   redirect(checkoutUrl);
@@ -73,7 +74,7 @@ export const customerPortal = async () => {
   const frontendUrl = getEnvVar("FRONTEND_URL");
   const portalUrl = await createStripeCustomerPortalSession({
     customerId: user.stripeCustomerId,
-    returnUrl: `${frontendUrl}/dashboard`,
+    returnUrl: `${frontendUrl}${routes.workspace.overview}`,
   });
 
   redirect(portalUrl);

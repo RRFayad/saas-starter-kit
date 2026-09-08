@@ -252,8 +252,8 @@ CLERK_SECRET_KEY=sk_...
 CLERK_WEBHOOK_SIGNING_SECRET=whsec_...
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
-NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/dashboard
-NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/dashboard
+NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/workspace/overview
+NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/workspace/overview
 
 # Stripe
 STRIPE_SECRET_KEY=sk_...
@@ -334,7 +334,7 @@ Use the printed signing secret as `STRIPE_WEBHOOK_SECRET` while it runs.
 2. Sign up or sign in through Clerk.
 3. Complete Stripe Checkout using test mode.
 4. Confirm the Stripe webhook creates or updates a subscription row.
-5. Confirm `/dashboard` loads the protected FastAPI-backed sample data.
+5. Confirm `/workspace/overview` loads the protected FastAPI-backed sample data.
 6. Open Billing and confirm that **Manage billing** opens Stripe Customer Portal.
 7. Delete a Clerk user and confirm its local user and Stripe customer are
    removed.

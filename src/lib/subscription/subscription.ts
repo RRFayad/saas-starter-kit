@@ -7,6 +7,7 @@ import { eq } from "drizzle-orm";
 import { subscriptions } from "@/lib/db/schema";
 import { Subscription, SubscriptionPlan } from "@/types/database";
 import { getCurrentUser } from "../user/user";
+import { routes } from "@/lib/routes";
 
 const subscriptionPlanLevel: Record<SubscriptionPlan, number> = {
   basic: 1,
@@ -73,10 +74,10 @@ export const requireCurrentUserSubscriptionPlan = async (
   const { userId } = await auth();
 
   if (!userId) {
-    redirect("/sign-in");
+    redirect(routes.signIn);
   }
 
   if (!(await canCurrentUserAccessSubscriptionPlan(requiredPlan))) {
-    redirect("/pricing");
+    redirect(routes.pricing);
   }
 };

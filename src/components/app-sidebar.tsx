@@ -22,13 +22,16 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { tw } from "@/lib/utils";
+import { routes } from "@/lib/routes";
 
 const workspaceNavigation = [
   {
     title: "Overview",
-    href: "/dashboard",
+    href: routes.workspace.overview,
     icon: LayoutDashboardIcon,
   },
 ];
@@ -36,22 +39,24 @@ const workspaceNavigation = [
 const settingsNavigation = [
   {
     title: "Account",
-    href: "/account",
+    href: routes.settings.account,
     icon: UserRoundIcon,
   },
   {
     title: "Billing",
-    href: "/billing",
+    href: routes.settings.billing,
     icon: CreditCardIcon,
   },
 ];
 
 const styles = {
+  header: tw("flex-row items-center justify-between pt-3"),
   brand: tw(
     "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold",
   ),
   brandIcon: tw("size-4 text-primary"),
   brandLabel: tw("truncate group-data-[collapsible=icon]:hidden"),
+  desktopSidebarTrigger: tw("hidden md:inline-flex"),
   account: tw("flex items-center gap-2 rounded-md px-2 py-1.5"),
   accountContent: tw("min-w-0 group-data-[collapsible=icon]:hidden"),
   accountLabel: tw("truncate text-sm font-medium text-sidebar-foreground"),
@@ -61,16 +66,20 @@ const styles = {
 export const AppSidebar = () => {
   const pathname = usePathname();
   const { user } = useUser();
+  const { isMobile, state } = useSidebar();
   const accountName = user?.fullName ?? user?.firstName ?? "Signed in";
   const accountEmail = user?.primaryEmailAddress?.emailAddress;
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader>
-        <Link href="/dashboard" className={styles.brand}>
+      <SidebarHeader className={styles.header}>
+        <Link href={routes.workspace.overview} className={styles.brand}>
           <SparklesIcon className={styles.brandIcon} />
           <span className={styles.brandLabel}>SaaS Starter Kit</span>
         </Link>
+        {!isMobile && state === "expanded" && (
+          <SidebarTrigger className={styles.desktopSidebarTrigger} />
+        )}
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>

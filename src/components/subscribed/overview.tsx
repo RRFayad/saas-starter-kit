@@ -67,9 +67,7 @@ const styles = {
 };
 
 export const Overview = ({ dashboardData }: OverviewProps) => {
-  const description = dashboardData?.user_name
-    ? `A sample dashboard served by FastAPI for ${dashboardData.user_name}.`
-    : "A sample dashboard showing the kind of product UI this starter can support.";
+  const description = `This mock dashboard data was fetched from FastAPI. The included user name, ${dashboardData?.user_name}, confirms FastAPI is working and can read the application database.`;
 
   return (
     <div className={styles.page}>

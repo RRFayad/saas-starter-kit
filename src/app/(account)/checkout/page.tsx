@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { StartCheckout } from "./start-checkout";
 import { getAvailableStripePlans } from "@/lib/stripe/config";
+import { routes } from "@/lib/routes";
 import { tw } from "@/lib/utils";
 
 type CheckoutPageProps = {
@@ -21,13 +22,13 @@ const CheckoutPage = async ({ searchParams }: CheckoutPageProps) => {
       : undefined;
 
   if (!selectedPlan) {
-    redirect("/pricing");
+    redirect(routes.pricing);
   }
 
   const { userId } = await auth();
 
   if (!userId) {
-    redirect("/pricing");
+    redirect(routes.pricing);
   }
 
   return (

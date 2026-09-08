@@ -53,6 +53,9 @@ const getGridStyles = (planCount: number): string => {
   return `${styles.grid} ${styles.threePlans}`;
 };
 
+const getCheckoutRoute = (plan: AvailableStripePlan["plan"]): string =>
+  `/checkout?plan=${plan}`;
+
 export const PricingCards = ({ plans }: PricingCardsProps) => {
   return (
     <div className={getGridStyles(plans.length)}>
@@ -91,8 +94,8 @@ export const PricingCards = ({ plans }: PricingCardsProps) => {
             </ul>
             <Show when="signed-out">
               <SignUpButton
-                forceRedirectUrl={`/checkout?plan=${plan.plan}`}
-                signInForceRedirectUrl={`/checkout?plan=${plan.plan}`}
+                forceRedirectUrl={getCheckoutRoute(plan.plan)}
+                signInForceRedirectUrl={getCheckoutRoute(plan.plan)}
               >
                 {plan.isMostPopular ? (
                   <ShimmerButton className={styles.popularButton}>

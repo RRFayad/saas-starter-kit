@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { routes } from "@/lib/routes";
 import { siteConfig } from "@/lib/site-config";
 import { tw } from "@/lib/utils";
 
@@ -44,7 +45,7 @@ export const SiteFooter = () => {
     <footer className={styles.footer}>
       <div className={contentStyles}>
         <div>
-          <Link href="/" className={styles.brand}>
+          <Link href={routes.home} className={styles.brand}>
             SaaS Starter Kit
           </Link>
           <p className={styles.description}>
@@ -62,15 +63,9 @@ export const SiteFooter = () => {
             <ul className={styles.links}>
               {group.links.map((link) => (
                 <li key={link.text}>
-                  {link.href.startsWith("http") ? (
-                    <a href={link.href} rel="noopener" className={styles.link}>
-                      {link.text}
-                    </a>
-                  ) : (
-                    <Link href={link.href} className={styles.link}>
-                      {link.text}
-                    </Link>
-                  )}
+                  <a href={link.href} rel="noopener" className={styles.link}>
+                    {link.text}
+                  </a>
                 </li>
               ))}
             </ul>

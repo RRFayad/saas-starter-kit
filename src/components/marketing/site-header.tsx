@@ -5,6 +5,7 @@ import { SparklesIcon, StarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { siteConfig } from "@/lib/site-config";
+import { routes } from "@/lib/routes";
 import { tw } from "@/lib/utils";
 
 const styles = {
@@ -27,16 +28,16 @@ export const SiteHeader = () => {
   return (
     <header className={styles.header}>
       <div className={styles.content}>
-        <Link href="/" className={styles.brand}>
+        <Link href={routes.home} className={styles.brand}>
           <SparklesIcon className={styles.brandIcon} />
           Full-Stack SaaS Starter Kit
         </Link>
         <Show when="signed-out">
           <nav className={styles.navigation}>
-            <Link href="/sign-in" className={styles.navigationLink}>
+            <Link href={routes.signIn} className={styles.navigationLink}>
               Sign In
             </Link>
-            <Link href="/sign-up" className={styles.navigationLink}>
+            <Link href={routes.signUp} className={styles.navigationLink}>
               Sign Up
             </Link>
           </nav>

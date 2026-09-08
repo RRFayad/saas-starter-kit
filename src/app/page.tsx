@@ -35,6 +35,7 @@ import { TextReveal } from "@/components/velora/text-reveal";
 import { TiltCard } from "@/components/velora/tilt-card";
 import { Typewriter } from "@/components/velora/typewriter";
 import { siteConfig } from "@/lib/site-config";
+import { routes } from "@/lib/routes";
 import { getAvailableStripePlans } from "@/lib/stripe/config";
 import { tw } from "@/lib/utils";
 
@@ -209,7 +210,7 @@ const LandingPage = async () => {
   const { userId } = await auth();
 
   if (userId) {
-    redirect("/dashboard");
+    redirect(routes.workspace.overview);
   }
 
   return (
@@ -255,7 +256,7 @@ const LandingPage = async () => {
 
             <BlurFade delay={0.5}>
               <div className={styles.hero.actions}>
-                <form action="/dashboard">
+                <form action={routes.workspace.overview}>
                   <ShimmerButton type="submit">
                     <RocketIcon className={styles.hero.actionIcon} />
                     View Live Demo
@@ -512,7 +513,7 @@ const LandingPage = async () => {
                 billing, persistence, and backend integration already connected.
               </p>
               <div className={styles.callToAction.action}>
-                <form action="/dashboard">
+                <form action={routes.workspace.overview}>
                   <ShimmerButton
                     className={styles.callToAction.button}
                     type="submit"

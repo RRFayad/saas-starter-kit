@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
+import type { Route } from "next";
 import { useRouter } from "next/navigation";
 
 type RedirectAfterDelayProps = {
-  href: string;
+  href: Route;
   delayMilliseconds?: number;
 };
 

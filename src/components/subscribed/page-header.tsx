@@ -13,7 +13,7 @@ const styles = {
   wrapper: tw("flex flex-col justify-between gap-4 sm:flex-row sm:items-end"),
   eyebrow: tw("text-sm font-medium text-primary"),
   title: tw("mt-1 text-3xl font-semibold tracking-tight"),
-  description: tw("mt-2 max-w-2xl text-sm text-muted-foreground"),
+  description: tw("mt-2 max-w-6xl text-sm text-muted-foreground"),
   action: tw("w-fit"),
 };
 

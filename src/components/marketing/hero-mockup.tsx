@@ -13,6 +13,7 @@ import {
 import { BorderBeam } from "@/components/velora/border-beam";
 import { BrowserMockup } from "@/components/velora/browser-mockup";
 import { NumberTicker } from "@/components/velora/number-ticker";
+import { routes } from "@/lib/routes";
 import { cn, tw } from "@/lib/utils";
 
 const navItems = [
@@ -88,7 +89,10 @@ export const HeroMockup = ({ className }: { className?: string }) => {
       {/* Glow */}
       <div aria-hidden className={styles.glow} />
 
-      <BrowserMockup url="starter-kit/dashboard" className={styles.browser}>
+      <BrowserMockup
+        url={`starter-kit${routes.workspace.overview}`}
+        className={styles.browser}
+      >
         <BorderBeam size={96} duration={10} />
 
         <div className={styles.dashboard}>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { RedirectAfterDelay } from "@/components/payment/redirect-after-delay";
 import { Button } from "@/components/ui/button";
 import { tw } from "@/lib/utils";
+import { routes } from "@/lib/routes";
 
 const styles = {
   page: tw(
@@ -15,13 +16,13 @@ const styles = {
 const Success = () => {
   return (
     <main className={styles.page}>
-      <RedirectAfterDelay href="/dashboard" />
+      <RedirectAfterDelay href={routes.workspace.overview} />
       <h1 className={styles.heading}>Subscription confirmed.</h1>
       <p className={styles.description}>
-        Your subscription is being synchronized. Continue to your dashboard.
+        Your subscription is being synchronized. Continue to your overview.
       </p>
       <Button asChild>
-        <Link href="/dashboard">Continue to dashboard</Link>
+        <Link href={routes.workspace.overview}>Continue to overview</Link>
       </Button>
     </main>
   );
