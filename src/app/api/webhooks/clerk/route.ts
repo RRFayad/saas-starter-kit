@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
-import { deleteStripeCustomer } from "@/lib/stripe";
+import { deleteStripeCustomer, updateStripeCustomerEmail } from "@/lib/stripe";
 import { getUserByClerkId } from "@/lib/user/user";
 import { NextRequest } from "next/server";
 import { verifyWebhook } from "@clerk/nextjs/webhooks";
@@ -40,6 +40,14 @@ const handleUserUpdated = async (user: UserJSON) => {
   }
 
   const name = [user.first_name, user.last_name].filter(Boolean).join(" ");
+  const dbUser = await getUserByClerkId(user.id);
+
+  if (dbUser?.stripeCustomerId && dbUser.email !== primaryEmail.email_address) {
+    await updateStripeCustomerEmail(
+      dbUser.stripeCustomerId,
+      primaryEmail.email_address,
+    );
+  }
 
   await db
     .update(users)

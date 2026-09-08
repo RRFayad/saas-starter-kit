@@ -1,5 +1,12 @@
+import { redirect } from "next/navigation";
+
 import { PricingCards } from "@/components/marketing/pricing-cards";
+import { routes } from "@/lib/routes";
 import { getAvailableStripePlans } from "@/lib/stripe/config";
+import {
+  getCurrentUserSubscription,
+  isSubscriptionActive,
+} from "@/lib/subscription/subscription";
 import { tw } from "@/lib/utils";
 
 const styles = {
@@ -9,7 +16,13 @@ const styles = {
   description: tw("mx-auto mt-4 max-w-xl text-center text-muted-foreground"),
 };
 
-const PricingPage = () => {
+const PricingPage = async () => {
+  const subscription = await getCurrentUserSubscription();
+
+  if (isSubscriptionActive(subscription)) {
+    redirect(routes.workspace.overview);
+  }
+
   const plans = getAvailableStripePlans();
 
   return (
