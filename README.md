@@ -306,12 +306,16 @@ Checkout, so it does not require `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`.
 Create `backend/.env`:
 
 ```env
-DATABASE_URL=postgresql://...
+# SQLAlchemy with Psycopg 3 requires the explicit driver prefix.
+DATABASE_URL="postgresql+psycopg://..."
 FRONTEND_URL=http://localhost:3000
 CLERK_JWKS_URL=https://<your-clerk-instance>/.well-known/jwks.json
 ```
 
-These `DATABASE_URL` and `FRONTEND_URL` values must match `.env.local`.
+Both `DATABASE_URL` values must point to the same PostgreSQL database, and both
+`FRONTEND_URL` values must match. The Next.js project uses `postgresql://...`;
+the FastAPI project must use `postgresql+psycopg://...`, which explicitly tells
+SQLAlchemy to use Psycopg 3.
 
 ### 6. Apply the Database Migrations
 
