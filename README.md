@@ -298,10 +298,14 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 STRIPE_BASIC_PRICE_ID=price_...
 STRIPE_PREMIUM_PRICE_ID=price_...
 STRIPE_ALL_IN_PRICE_ID=price_...
+# Optional: automatically apply a Stripe Coupon to Checkout demos
+STRIPE_DEMO_COUPON_ID=
 ```
 
 `NEXT_PUBLIC_GITHUB_URL` is optional. The current starter uses Stripe-hosted
 Checkout, so it does not require `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`.
+`STRIPE_DEMO_COUPON_ID` is also optional; set it to a Stripe Coupon ID only
+when a demo should apply that discount automatically.
 
 Create `backend/.env`:
 

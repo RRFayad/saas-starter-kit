@@ -67,6 +67,9 @@ export const createStripeCheckoutSession = async ({
   const session = await stripe.checkout.sessions.create({
     customer: customerId,
     mode: "subscription",
+
+    payment_method_collection: stripeDiscountCoupon ? "if_required" : "always",
+
     payment_method_types: ["card"],
     billing_address_collection: "auto",
     line_items: [
