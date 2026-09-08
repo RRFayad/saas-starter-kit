@@ -15,8 +15,9 @@ const styles = {
   content: tw(
     "mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto_1fr] items-center px-4 lg:px-8",
   ),
-  brand: tw("flex items-center gap-2 font-semibold"),
-  brandIcon: tw("size-5 text-primary"),
+  brand: tw("flex items-center font-semibold"),
+  brandIcon: tw("mr-2 size-5 text-primary"),
+  brandPrefix: tw("mr-1 hidden sm:inline"),
   navigation: tw(
     "hidden items-center gap-6 text-sm text-muted-foreground md:flex",
   ),
@@ -30,7 +31,7 @@ export const SiteHeader = () => {
       <div className={styles.content}>
         <Link href={routes.home} className={styles.brand}>
           <SparklesIcon className={styles.brandIcon} />
-          Full-Stack SaaS Starter Kit
+          <span className={styles.brandPrefix}>Full-Stack</span>SaaS Starter Kit
         </Link>
         <Show when="signed-out">
           <nav className={styles.navigation}>
