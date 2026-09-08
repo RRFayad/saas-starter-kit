@@ -11,11 +11,25 @@ import {
 } from "@/lib/stripe";
 import { getOrCreateUserByClerkId, getUserByClerkId } from "@/lib/user/user";
 import { routes } from "@/lib/routes";
+import {
+  getSubscriptionByUserId,
+  isSubscriptionActive,
+} from "@/lib/subscription/subscription";
 import { getEnvVar } from "@/lib/utils";
 import type { SubscriptionPlan } from "@/types/database";
 
 const isSubscriptionPlan = (value: string): value is SubscriptionPlan => {
   return subscriptionPlan.enumValues.includes(value as SubscriptionPlan);
+};
+
+const redirectToCustomerPortal = async (customerId: string): Promise<never> => {
+  const frontendUrl = getEnvVar("FRONTEND_URL");
+  const portalUrl = await createStripeCustomerPortalSession({
+    customerId,
+    returnUrl: `${frontendUrl}${routes.workspace.overview}`,
+  });
+
+  redirect(portalUrl);
 };
 
 export const checkout = async (formData: FormData) => {
@@ -35,6 +49,16 @@ export const checkout = async (formData: FormData) => {
 
   if (!user) {
     throw new Error("Application user not found");
+  }
+
+  const subscription = await getSubscriptionByUserId(user.id);
+
+  if (isSubscriptionActive(subscription)) {
+    if (!user.stripeCustomerId) {
+      throw new Error("Active subscription is missing a Stripe customer");
+    }
+
+    return redirectToCustomerPortal(user.stripeCustomerId);
   }
 
   const frontendUrl = getEnvVar("FRONTEND_URL");
@@ -71,11 +95,5 @@ export const customerPortal = async () => {
     throw new Error("Stripe customer not found");
   }
 
-  const frontendUrl = getEnvVar("FRONTEND_URL");
-  const portalUrl = await createStripeCustomerPortalSession({
-    customerId: user.stripeCustomerId,
-    returnUrl: `${frontendUrl}${routes.workspace.overview}`,
-  });
-
-  redirect(portalUrl);
+  return redirectToCustomerPortal(user.stripeCustomerId);
 };
