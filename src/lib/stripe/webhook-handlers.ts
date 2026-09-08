@@ -14,7 +14,7 @@ type SubscriptionWebhookEvent = Stripe.Event & {
 
 const getPlanForPriceId = (priceId: string): SubscriptionPlan => {
   const priceEntry = (
-    Object.entries(stripePriceIds) as [SubscriptionPlan, string | null][]
+    Object.entries(stripePriceIds) as [SubscriptionPlan, string | undefined][]
   ).find(([, configuredPriceId]) => configuredPriceId === priceId);
 
   if (!priceEntry) {

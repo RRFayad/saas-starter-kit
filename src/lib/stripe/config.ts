@@ -6,7 +6,7 @@ export const stripePriceIds = {
   basic: getEnvVar("STRIPE_BASIC_PRICE_ID", false),
   premium: getEnvVar("STRIPE_PREMIUM_PRICE_ID", false),
   all_in: getEnvVar("STRIPE_ALL_IN_PRICE_ID", false),
-} satisfies Record<SubscriptionPlan, string | null>;
+} satisfies Record<SubscriptionPlan, string | undefined>;
 
 type StripePlanDetails = {
   name: string;

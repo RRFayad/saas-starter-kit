@@ -24,10 +24,13 @@ export const capitalize = (value: string, allWords = false): string => {
 type GetEnvVar = {
   (name: string): string;
   (name: string, throwErr: true): string;
-  (name: string, throwErr: false): string | null;
+  (name: string, throwErr: false): string | undefined;
 };
 
-export const getEnvVar = ((name: string, throwErr = true): string | null => {
+export const getEnvVar = ((
+  name: string,
+  throwErr = true,
+): string | undefined => {
   const value = process.env[name];
 
   if (!value) {
@@ -35,7 +38,7 @@ export const getEnvVar = ((name: string, throwErr = true): string | null => {
       throw new Error(`${name} environment variable is not set`);
     }
 
-    return null;
+    return undefined;
   }
 
   return value;

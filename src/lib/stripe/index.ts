@@ -6,6 +6,7 @@ import { getEnvVar, getErrorMessageAndThrow } from "../utils";
 import { addStripeCustomerIdToUserDb } from "../user/user";
 
 const stripeSecretKey = getEnvVar("STRIPE_SECRET_KEY");
+const stripeDiscountCoupon = getEnvVar("STRIPE_DEMO_COUPON_ID", false);
 
 export const stripe = new Stripe(stripeSecretKey);
 
@@ -77,6 +78,7 @@ export const createStripeCheckoutSession = async ({
     customer_update: { name: "auto", address: "auto" },
     success_url: successUrl,
     cancel_url: cancelUrl || `/`,
+    discounts: [{ coupon: stripeDiscountCoupon }],
   });
 
   if (!session.url) {
