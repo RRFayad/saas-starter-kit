@@ -72,8 +72,7 @@ export const Overview = ({ dashboardData }: OverviewProps) => {
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Overview"
-        title="Your business at a glance."
+        title="Your business at a glance"
         description={description}
         action={<span className={styles.sampleBadge}>Sample data</span>}
       />

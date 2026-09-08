@@ -56,7 +56,7 @@ export const Billing = ({ subscription }: BillingProps) => {
   if (!subscription) {
     return (
       <div className={styles.page}>
-        <PageHeader eyebrow="Billing" title="Subscription and billing." />
+        <PageHeader title="Subscription and billing" />
         <div className={styles.empty}>
           <p className={styles.emptyHeading}>No current subscription</p>
           <p className={styles.emptyDescription}>
@@ -72,8 +72,7 @@ export const Billing = ({ subscription }: BillingProps) => {
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Billing"
-        title="Subscription and billing."
+        title="Subscription and billing"
         description="Your subscription state is synchronized from Stripe and stored locally for authorization."
       />
 

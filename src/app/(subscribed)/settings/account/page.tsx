@@ -12,8 +12,7 @@ const AccountPage = () => {
   return (
     <main className={styles.page}>
       <PageHeader
-        eyebrow="Account"
-        title="Manage your account."
+        title="Manage your account"
         description={
           <>
             Your profile and security settings are securely managed by Clerk,
