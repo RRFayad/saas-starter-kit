@@ -23,7 +23,7 @@ export function RetroGrid({
       aria-hidden
       data-slot="retro-grid"
       className={cn(
-        "pointer-events-none absolute inset-0 overflow-hidden [perspective:240px]",
+        "pointer-events-none absolute inset-0 overflow-hidden perspective-[240px]",
         className,
       )}
       style={{ opacity }}
@@ -44,7 +44,7 @@ export function RetroGrid({
           }
         />
       </div>
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background" />
+      <div className="absolute inset-0 bg-linear-to-t from-background via-transparent to-background" />
     </div>
   );
 }
