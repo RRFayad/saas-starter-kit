@@ -25,21 +25,24 @@ import {
 } from "@/components/ui/sidebar";
 import { tw } from "@/lib/utils";
 
-const navigation = [
+const workspaceNavigation = [
   {
     title: "Overview",
     href: "/dashboard",
     icon: LayoutDashboardIcon,
   },
-  {
-    title: "Billing",
-    href: "/billing",
-    icon: CreditCardIcon,
-  },
+];
+
+const settingsNavigation = [
   {
     title: "Account",
     href: "/account",
     icon: UserRoundIcon,
+  },
+  {
+    title: "Billing",
+    href: "/billing",
+    icon: CreditCardIcon,
   },
 ];
 
@@ -71,10 +74,10 @@ export const AppSidebar = () => {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>Workspace</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navigation.map((item) => (
+              {workspaceNavigation.map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
                     isActive={pathname === item.href}
@@ -90,6 +93,25 @@ export const AppSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarGroup>
+        <SidebarGroupLabel>Settings</SidebarGroupLabel>
+        <SidebarGroupContent>
+          <SidebarMenu>
+            {settingsNavigation.map((item) => (
+              <SidebarMenuItem key={item.href}>
+                <SidebarMenuButton
+                  isActive={pathname === item.href}
+                  render={<Link href={item.href} />}
+                  tooltip={item.title}
+                >
+                  <item.icon />
+                  <span>{item.title}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
       <SidebarFooter>
         <div className={styles.account}>
           <UserButton />
