@@ -9,6 +9,8 @@ export const routes = {
   },
   workspace: {
     overview: "/workspace/overview",
+    // For a dynamic path, add a function and a matching [param]/page.tsx folder:
+    // item: (itemId: string) => `/workspace/items/${encodeURIComponent(itemId)}`,
   },
   settings: {
     account: "/settings/account",

@@ -122,6 +122,10 @@ export const Example = () => <section className={styles.card} />;
 `tw()` lets the Tailwind Prettier plugin sort classes in those strings. Use
 `cn()` only for runtime conditional merging.
 
+For Tailwind autocomplete inside `tw()`, install the official Tailwind CSS
+IntelliSense VS Code extension. This repository's `.vscode/settings.json`
+configures the extension for the wrapper automatically.
+
 ## Project Structure
 
 ```text
@@ -401,3 +405,39 @@ uv run --project backend isort --check-only backend
 Keep SaaS concerns in Next.js and add product/domain features to FastAPI. An AI
 product can add ingestion, retrieval, conversations, agents, and streaming
 under `backend/` while reusing the starter's SaaS foundation.
+
+### Add a Product API Feature
+
+1. Create a FastAPI router in `backend/routers/` with the product endpoint.
+2. Include the router in `backend/main.py` with the appropriate
+   `require_subscription_plan(...)` dependency. Keep `/healthy` public.
+3. Create a typed server-side fetch function in `src/lib/backend/` that calls
+   the new endpoint through `fetchBackendData`.
+4. Call that function from a subscribed page or component. FastAPI obtains the
+   authenticated user from the Clerk JWT; do not pass a trusted user ID from
+   the browser.
+
+### Add Product Routes
+
+Use `src/lib/routes.ts` for shared static destinations. For a dynamic product
+route, add a route function that accepts the ID and create the matching Next.js
+folder, for example `workspace/items/[itemId]/page.tsx`. Use the route function
+for sidebar and navigation links so a path change has one source of truth.
+
+### Change Subscription Plans
+
+To configure an existing plan, create its recurring Stripe Price, set the
+matching `STRIPE_*_PRICE_ID`, and update its display copy in
+`src/lib/stripe/config.ts`.
+
+To add a new plan, update all of the following together:
+
+1. `SubscriptionPlan` in `src/types/database.ts` and the Drizzle enum in
+   `src/lib/db/schema.ts`, then generate and apply a migration.
+2. The matching SQLAlchemy `SubscriptionPlan` enum and plan levels in
+   `backend/db/models.py` and `backend/auth/subscription.py`.
+3. The Stripe Price ID and pricing copy in `src/lib/stripe/config.ts`.
+4. The recurring Price in Stripe.
+
+Do not remove or rename an already-issued plan value without first planning a
+database and Stripe migration for existing subscriptions.
