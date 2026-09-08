@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CircleCheckBigIcon } from "lucide-react";
 
 import { RedirectAfterDelay } from "@/components/payment/redirect-after-delay";
 import { Button } from "@/components/ui/button";
@@ -6,24 +7,34 @@ import { tw } from "@/lib/utils";
 import { routes } from "@/lib/routes";
 
 const styles = {
-  page: tw(
-    "flex min-h-screen flex-col items-center justify-center gap-4 px-4 text-center",
+  page: tw("flex min-h-screen items-center justify-center bg-muted/20 px-4"),
+  card: tw(
+    "w-full max-w-md space-y-5 rounded-2xl border bg-card p-8 text-center shadow-sm",
   ),
+  icon: tw("mx-auto size-10 text-primary"),
   heading: tw("text-3xl font-semibold tracking-tight"),
   description: tw("max-w-md text-muted-foreground"),
+  action: tw("w-full"),
 };
 
 const Success = () => {
   return (
     <main className={styles.page}>
-      <RedirectAfterDelay href={routes.workspace.overview} />
-      <h1 className={styles.heading}>Subscription confirmed.</h1>
-      <p className={styles.description}>
-        Your subscription is being synchronized. Continue to your overview.
-      </p>
-      <Button asChild>
-        <Link href={routes.workspace.overview}>Continue to overview</Link>
-      </Button>
+      <section className={styles.card}>
+        <CircleCheckBigIcon className={styles.icon} />
+        <h1 className={styles.heading}>Subscription confirmed.</h1>
+        <p className={styles.description}>
+          Your subscription is being synchronized. Your workspace will be ready
+          shortly.
+        </p>
+        <Button className={styles.action} asChild>
+          <Link href={routes.workspace.overview}>Go to workspace now</Link>
+        </Button>
+        <RedirectAfterDelay
+          href={routes.workspace.overview}
+          destination="your workspace"
+        />
+      </section>
     </main>
   );
 };
