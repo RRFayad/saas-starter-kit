@@ -126,6 +126,39 @@ For Tailwind autocomplete inside `tw()`, install the official Tailwind CSS
 IntelliSense VS Code extension. This repository's `.vscode/settings.json`
 configures the extension for the wrapper automatically.
 
+### Theme and Design Tokens
+
+Theme values live in `src/app/globals.css`. This project uses Tailwind v4 CSS
+tokens, so there is no `tailwind.config.ts` to edit.
+
+1. `@theme inline` exposes CSS variables as Tailwind utilities.
+2. `:root` defines the light theme.
+3. `.dark` overrides the same variables for dark mode.
+
+To change the default visual identity, update the matching light and dark
+values for `--primary`, `--primary-foreground`, `--brand`, and the
+`--brand-from`, `--brand-via`, and `--brand-to` gradient tokens. Keep text and
+background pairs readable in both themes.
+
+Use semantic Tailwind utilities in application components instead of raw color
+palettes:
+
+```tsx
+const styles = {
+  card: tw("border-border bg-card text-card-foreground"),
+  description: tw("text-muted-foreground"),
+  action: tw("bg-primary text-primary-foreground"),
+};
+```
+
+`background` and `foreground` define the application canvas; `card`, `muted`,
+`accent`, `border`, `input`, and `ring` support the shadcn/ui primitives.
+`brand-*` is for the marketing gradient, and `sidebar-*` controls the
+authenticated app sidebar. The `ThemeProvider` adds or removes the `.dark`
+class on the document root; `ThemeToggle` changes it. Change
+`defaultTheme="dark"` in `src/app/layout.tsx` if the clone should open in light
+mode instead.
+
 ## Project Structure
 
 ```text
