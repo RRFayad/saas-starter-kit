@@ -122,7 +122,7 @@ const styles = {
   hero: {
     section: tw("relative overflow-hidden pt-40 pb-24 lg:pt-48 lg:pb-28"),
     gridPattern: tw(
-      "[mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)] fill-transparent stroke-border/60",
+      "mask-[radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)] fill-transparent stroke-border/60",
     ),
     content: tw("relative mx-auto max-w-6xl px-4 text-center lg:px-8"),
     badge: tw(
@@ -172,7 +172,7 @@ const styles = {
     description: tw("mt-2 text-sm text-muted-foreground"),
   },
   testimonials: {
-    grid: tw("mt-16 columns-1 gap-6 md:columns-2 lg:columns-3 [&>*]:mb-6"),
+    grid: tw("mt-16 columns-1 gap-6 *:mb-6 md:columns-2 lg:columns-3"),
     item: tw("break-inside-avoid"),
     card: tw("rounded-2xl border bg-card p-6"),
     stars: tw("flex gap-0.5 text-amber-400"),
