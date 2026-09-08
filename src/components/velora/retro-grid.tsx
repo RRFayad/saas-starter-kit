@@ -24,7 +24,7 @@ export function RetroGrid({
       data-slot="retro-grid"
       className={cn(
         "pointer-events-none absolute inset-0 overflow-hidden [perspective:240px]",
-        className
+        className,
       )}
       style={{ opacity }}
       {...props}
@@ -34,7 +34,7 @@ export function RetroGrid({
         style={{ transform: `rotateX(${angle}deg)` }}
       >
         <div
-          className="animate-retro-grid [inset:0%_0px] [margin-left:-200%] [transform-origin:100%_0_0] absolute h-[300vh] w-[600vw] [background-image:linear-gradient(to_right,var(--grid-line)_1px,transparent_0),linear-gradient(to_bottom,var(--grid-line)_1px,transparent_0)] [background-repeat:repeat]"
+          className="absolute inset-[0%_0px] ml-[-200%] h-[300vh] w-[600vw] origin-[100%_0_0] animate-retro-grid bg-[linear-gradient(to_right,var(--grid-line)_1px,transparent_0),linear-gradient(to_bottom,var(--grid-line)_1px,transparent_0)] bg-repeat"
           style={
             {
               backgroundSize: `${cellSize}px ${cellSize}px`,

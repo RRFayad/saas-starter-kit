@@ -5,7 +5,7 @@ import { tw } from "@/lib/utils";
 
 const styles = {
   page: tw("mx-auto w-full max-w-7xl space-y-8"),
-  profile: tw("rounded-xl"),
+  profile: tw("flex w-full justify-center rounded-xl"),
 };
 
 const AccountPage = () => {
