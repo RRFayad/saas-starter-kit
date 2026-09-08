@@ -6,6 +6,7 @@ import { tw } from "@/lib/utils";
 const styles = {
   page: tw("mx-auto w-full max-w-7xl space-y-8"),
   profile: tw("flex w-full justify-center rounded-xl"),
+  clerkProfileCard: tw("max-h-150"),
 };
 
 const AccountPage = () => {
@@ -22,7 +23,14 @@ const AccountPage = () => {
         }
       />
       <section className={styles.profile}>
-        <UserProfile routing="hash" />
+        <UserProfile
+          routing="hash"
+          appearance={{
+            elements: {
+              cardBox: styles.clerkProfileCard,
+            },
+          }}
+        />
       </section>
     </main>
   );
