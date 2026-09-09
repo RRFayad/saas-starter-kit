@@ -3,6 +3,10 @@
 A reusable full-stack foundation for subscription SaaS products, including
 Python-first AI applications.
 
+## Video Demo
+
+[Watch the Video Walkthrough](https://www.loom.com/share/b9e6a7a19a3e42b686d7ca6208469023)
+
 ## What Is Included
 
 - Clerk authentication and user lifecycle synchronization
