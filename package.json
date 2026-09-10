@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check": "npm run lint && npx tsc --noEmit && uv run --project backend black --check backend && uv run --project backend isort --check-only backend"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

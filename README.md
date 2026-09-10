@@ -489,25 +489,11 @@ Product-specific tables can be introduced as the product architecture evolves.
 
 # Development Checks
 
-Frontend:
+Run all frontend and backend checks:
 
 ```bash
-npm run lint
-npx tsc --noEmit
-```
-
-Backend:
-
-```bash
-uv run --project backend black --check backend
-uv run --project backend isort --check-only backend
-```
-
-Before committing:
-
-```bash
-git status
-git diff
+npm run check
+npm run build
 ```
 
 ---
