@@ -1,209 +1,211 @@
 # SaaS Starter Kit
 
-A reusable full-stack foundation for subscription SaaS products, including
-Python-first AI applications.
+A reusable full-stack foundation for subscription SaaS products, including Python-first AI applications.
 
-## Video Demo
+Built to handle the SaaS infrastructure once, so new products can start with authentication, billing, database persistence, authorization, and a Python backend already working.
 
 [Watch the Video Walkthrough](https://www.loom.com/share/b9e6a7a19a3e42b686d7ca6208469023)
 
-## What Is Included
+## What's Included
 
-- Clerk authentication and user lifecycle synchronization
-- PostgreSQL persistence with Drizzle ORM and versioned migrations
-- Stripe Checkout, Customer Portal, and subscription webhooks
-- Server-side subscription authorization in Next.js and FastAPI
-- A FastAPI backend protected by Clerk JWTs
-- A responsive landing page, pricing flow, authenticated app shell, billing,
-  and account pages
-- A protected dashboard request that demonstrates the Next.js to FastAPI
-  boundary end to end
+- Next.js + TypeScript frontend
+- FastAPI + Python backend
+- PostgreSQL database
+- Clerk authentication
+- Clerk → PostgreSQL user synchronization
+- Stripe Checkout and Customer Portal
+- Stripe → PostgreSQL subscription synchronization
+- Subscription authorization in Next.js and FastAPI
+- Drizzle ORM + migrations
+- SQLAlchemy
+- Responsive landing page and authenticated app shell
+- Billing and account management
+- Protected Next.js → FastAPI communication
+- Tailwind CSS + shadcn/ui + Velora UI
+- Light/dark themes
 
 ## Architecture
 
-### Stack
-
-| Area            | Technology                                     |
-| --------------- | ---------------------------------------------- |
-| Web application | Next.js App Router, React, TypeScript          |
-| Styling         | Tailwind CSS, shadcn/ui, Velora UI             |
-| Authentication  | Clerk                                          |
-| Database        | PostgreSQL, Drizzle ORM, postgres.js           |
-| Billing         | Stripe Checkout, Customer Portal, and webhooks |
-| Product backend | FastAPI, SQLAlchemy, Python managed with uv    |
-
-Supabase is optional PostgreSQL hosting. Any PostgreSQL provider works; this
-starter does not use Supabase Auth, Storage, or the Supabase SDK.
+```text
+Browser
+   │
+   ▼
+Next.js
+   ├── UI / App Shell
+   ├── Clerk Authentication
+   ├── Clerk Webhooks
+   ├── Stripe Checkout / Portal
+   ├── Stripe Webhooks
+   └── SaaS Authorization
+   │
+   ├──────────────► PostgreSQL
+   │
+   ▼
+FastAPI
+   ├── Clerk JWT Validation
+   ├── Subscription Authorization
+   └── Product / AI Logic
+   │
+   ▼
+PostgreSQL
+```
 
 ### Responsibilities
 
-```text
-Next.js
-  - UI and application shell
-  - Clerk authentication
-  - Application user lifecycle and Clerk user synchronization
-  - Clerk and Stripe webhooks
-  - Stripe Checkout and Customer Portal
-  - Payments, subscriptions, and server-side subscription page guards
+**Next.js owns SaaS infrastructure:**
 
-FastAPI
-  - Product and domain APIs
-  - Clerk JWT validation
-  - Read-only application user and subscription lookup for API authorization
-  - Future Python/AI logic
+- Authentication
+- User synchronization
+- Billing
+- Subscription state
+- Account management
 
-PostgreSQL
-  - Application users
-  - Current subscription state
-```
+**FastAPI owns product/domain logic:**
 
-Next.js is the **SaaS service layer**: it owns user synchronization, billing,
-subscription state, and account-facing behavior. FastAPI is the **product
-layer**: it does not create, update, or delete users or payments. It reads the
-existing user and subscription records only after validating a Clerk token, so
-it can authorize product API requests.
+- Product APIs
+- Future domain logic (AI features, etc)
 
-### Identity and API Flow
+Both use the same PostgreSQL database.
 
-```text
-Browser
-  -> Next.js Server Component / Server Action
-  -> Clerk session token
-  -> FastAPI Authorization header
-  -> Clerk JWKS validation
-  -> PostgreSQL user lookup by clerk_id
-  -> Subscription-plan authorization
-  -> Protected FastAPI response
-  -> Next.js renders the result
-```
+Drizzle owns the SaaS database schema and migrations. SQLAlchemy maps the existing tables for FastAPI access.
 
-The browser never supplies a trusted user ID to FastAPI. FastAPI derives the
-Clerk user ID from the verified token and reads the application user itself.
-
-### Billing Flow
-
-```text
-User selects a plan
-  -> Next.js Server Action validates the plan
-  -> Stripe Checkout
-  -> Stripe subscription webhook
-  -> PostgreSQL subscriptions table
-  -> Next.js and FastAPI authorize from local subscription state
-```
-
-Stripe is the billing source of truth. PostgreSQL stores current subscription
-state for authorization, and webhook timestamps prevent delayed events from
-overwriting newer data.
-
-### Database Ownership
-
-Drizzle owns the PostgreSQL schema and migrations in `src/lib/db/`.
-SQLAlchemy models in `backend/db/models.py` map to that same schema so FastAPI
-can query it. Do not use SQLAlchemy `create_all()` for this project.
-
-The starter includes:
-
-- `users`: application identity linked to Clerk through `clerk_id`
-- `subscriptions`: one current Stripe subscription per user
-
-## UI and Styling
-
-shadcn/ui provides base primitives in `src/components/ui/`; Velora UI provides
-marketing primitives in `src/components/velora/`. Keep copied components close
-to their upstream source.
-
-Application-owned components place static Tailwind classes in named `styles`
-entries to keep JSX readable:
-
-```tsx
-const styles = {
-  card: tw("rounded-xl border bg-card p-6 shadow-sm"),
-};
-
-export const Example = () => <section className={styles.card} />;
-```
-
-`tw()` lets the Tailwind Prettier plugin sort classes in those strings. Use
-`cn()` only for runtime conditional merging.
-
-For Tailwind autocomplete inside `tw()`, install the official Tailwind CSS
-IntelliSense VS Code extension. This repository's `.vscode/settings.json`
-configures the extension for the wrapper automatically.
-
-### Theme and Design Tokens
-
-Theme values live in `src/app/globals.css`. This project uses Tailwind v4 CSS
-tokens, so there is no `tailwind.config.ts` to edit.
-
-1. `@theme inline` exposes CSS variables as Tailwind utilities.
-2. `:root` defines the light theme.
-3. `.dark` overrides the same variables for dark mode.
-
-To change the default visual identity, update the matching light and dark
-values for `--primary`, `--primary-foreground`, `--brand`, and the
-`--brand-from`, `--brand-via`, and `--brand-to` gradient tokens. Keep text and
-background pairs readable in both themes.
-
-Use semantic Tailwind utilities in application components instead of raw color
-palettes:
-
-```tsx
-const styles = {
-  card: tw("border-border bg-card text-card-foreground"),
-  description: tw("text-muted-foreground"),
-  action: tw("bg-primary text-primary-foreground"),
-};
-```
-
-`background` and `foreground` define the application canvas; `card`, `muted`,
-`accent`, `border`, `input`, and `ring` support the shadcn/ui primitives.
-`brand-*` is for the marketing gradient, and `sidebar-*` controls the
-authenticated app sidebar. The `ThemeProvider` adds or removes the `.dark`
-class on the document root; `ThemeToggle` changes it. Change
-`defaultTheme="dark"` in `src/app/layout.tsx` if the clone should open in light
-mode instead.
+Stripe remains the billing source of truth. PostgreSQL stores the current subscription state used for authorization.
 
 ## Project Structure
 
 ```text
 src/
-  actions/                 Next.js Server Actions, including Stripe actions
-  app/
-    (account)/             Clerk and checkout-related routes
-    (marketing)/           Public marketing routes
-    (subscribed)/          Plan-protected application routes
-    api/webhooks/          Clerk and Stripe webhook endpoints
-  components/
-    marketing/             Landing page header, footer, pricing, and sections
-    subscribed/            Authenticated application components
-    theme/                 Theme provider and toggle
-    ui/                    shadcn/ui primitives
-    velora/                Velora UI primitives
+  actions/             Server Actions
+  app/                 Next.js routes
+  components/          UI components
   lib/
-    backend/               Typed Next.js to FastAPI client functions
-    db/                    Drizzle client, schema, and migrations
-    stripe/                Stripe SDK and webhook handling
-    subscription/          Next.js subscription authorization helpers
-    user/                  Application user queries
+    backend/           Next.js → FastAPI client
+    db/                Drizzle schema and migrations
+    stripe/            Stripe integration
+    subscription/      Subscription authorization
+    user/              User queries
 
 backend/
-  auth/                    Clerk JWT and plan authorization dependencies
-  db/                      SQLAlchemy connection and schema mappings
-  routers/                 Product/domain API routes
-  main.py                  FastAPI application and CORS setup
+  auth/                Clerk + subscription authorization
+  db/                  SQLAlchemy connection/models
+  routers/             Product APIs
+  main.py              FastAPI application
 ```
 
-## Use This Starter
+---
 
-### 1. Clone and Install Dependencies
+# Start a New SaaS
+
+## 1. Clone the Starter
 
 ```bash
-git clone <your-fork-or-template-url> my-saas
+git clone https://github.com/RRFayad/saas-starter-kit.git my-saas
 cd my-saas
+```
+
+## 2. Create Your Own Git Repository
+
+The clone initially contains the SaaS Starter Kit Git history.
+
+Remove it:
+
+```bash
+rm -rf .git
+```
+
+Initialize a fresh repository:
+
+```bash
+git init
+git add .
+git commit -m "chore: initialize project from SaaS Starter Kit"
+```
+
+Create an empty repository for your new product on GitHub, then connect it:
+
+```bash
+git remote add origin https://github.com/<your-username>/<your-repository>.git
+git branch -M main
+git push -u origin main
+```
+
+Your product now has its own Git history and is independent from the Starter Kit.
+
+## 3. Create Local Environment Files
+
+Create the ignored local environment files before configuring providers:
+
+```bash
+touch .env.local backend/.env
+```
+
+**Important:** Confirm both files are ignored in your repo.
+
+Start with these templates. Fill each value in the relevant setup step below.
+
+`.env.local`:
+
+```env
+# Application - Replace these with the deployed service URLs in production.
+FRONTEND_URL=http://localhost:3000
+BACKEND_URL=http://127.0.0.1:8000
+
+# Database
+DATABASE_URL=postgresql://...
+
+# Clerk routes
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/
+NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/
+
+# Clerk
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+CLERK_WEBHOOK_SIGNING_SECRET=whsec_...
+CLERK_JWKS_URL=https://<your-clerk-instance>/.well-known/jwks.json
+
+# Stripe
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test...
+STRIPE_SECRET_KEY=sk_test_...
+
+# Stripe Prices: configure at least one
+STRIPE_BASIC_PRICE_ID=price_...
+STRIPE_PREMIUM_PRICE_ID=price_...
+STRIPE_ALL_IN_PRICE_ID=price_...
+
+# Stripe Webhook
+STRIPE_WEBHOOK_SECRET=whsec_...
+
+# Optional: automatically apply a Stripe Coupon to Checkout demos
+STRIPE_DEMO_COUPON_ID=
+
+# Optional: enables GitHub links on the landing page and in the SaaS shell
+NEXT_PUBLIC_GITHUB_URL=
+
+```
+
+`backend/.env`:
+
+```env
+# SQLAlchemy requires the explicit Psycopg 3 driver prefix.
+DATABASE_URL="postgresql+psycopg://..."
+CLERK_JWKS_URL=https://<your-clerk-instance>/.well-known/jwks.json
+FRONTEND_URL=http://localhost:3000
+```
+
+The two database URLs must target the same PostgreSQL database. Next.js uses
+`postgresql://...`; FastAPI uses `postgresql+psycopg://...`.
+
+## 4. Install Dependencies
+
+Frontend:
+
+```bash
 npm install
 ```
 
-The backend uses `uv` and Python `3.14`:
+Backend:
 
 ```bash
 cd backend
@@ -211,29 +213,63 @@ uv sync
 cd ..
 ```
 
-Prerequisites: Node.js, npm, uv, and Python 3.14.
+Prerequisites:
 
-### 2. Create a PostgreSQL Database
+- Node.js
+- npm
+- Python 3.14
+- uv
 
-Create a PostgreSQL database and copy its connection URL. Supabase, another
-provider, or local PostgreSQL all work. Next.js and FastAPI use the same URL.
+## 5. Create PostgreSQL Database
 
-### 3. Create a Clerk Application
+Create a PostgreSQL database using Supabase, another hosted provider, or local PostgreSQL.
 
-Create a Clerk application, enable the required sign-in methods, and copy its
-keys. FastAPI also needs the Clerk JWKS URL:
+**If using Supabase**, go to **Connect → Connection string → Direct
+connection / URI** and copy the PostgreSQL connection string. Do not use the
+Supabase REST API URL. Use the PostgreSQL URI as the basis for both database
+URLs below.
+
+Next.js and FastAPI must use the same database.
+
+Supabase is used only as PostgreSQL hosting in the reference project. The Starter Kit does not depend on Supabase Auth, Storage, or its SDK.
+
+Add the connection URL to `.env.local` as `DATABASE_URL`, then add the same
+database URL with the `postgresql+psycopg://` prefix to `backend/.env`.
+
+## 6. Configure Clerk
+
+Create a Clerk application and copy its publishable and secret keys to
+`.env.local` as `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`.
+
+`npm install` does not create Clerk environment variables. Clerk's `clerk init`
+CLI can write those two keys, but do not run it on this clone because Clerk is
+already integrated and the command can modify existing setup files.
+
+Add the Clerk JWKS URL to `.env.local` and `backend/.env`:
 
 ```text
 https://<your-clerk-instance>/.well-known/jwks.json
 ```
 
-Add a Clerk webhook:
+### Create a Clerk webhook:
 
 ```text
 https://<your-public-app-url>/api/webhooks/clerk
 ```
 
-Subscribe it to:
+For local testing, expose Next.js with an HTTPS tunnel such as ngrok:
+
+```bash
+ngrok http 3000
+```
+
+Use the generated URL as the webhook endpoint:
+
+```text
+https://<your-ngrok-url>/api/webhooks/clerk
+```
+
+Subscribe to:
 
 ```text
 user.created
@@ -241,99 +277,115 @@ user.updated
 user.deleted
 ```
 
-Copy its signing secret.
+Copy the webhook signing secret.
 
-### 4. Configure Stripe
+Add it to `.env.local` as `CLERK_WEBHOOK_SIGNING_SECRET`.
 
-Create recurring Stripe Prices for one or more starter plans:
+## 7. Configure Stripe
+
+Use **Test mode** while setting up the starter. You do not need to create
+customers or subscriptions manually; the application creates them through
+Stripe Checkout.
+
+### Create Products and Prices
+
+In the Stripe Dashboard, go to Developers > API keys. Copy the test-mode
+publishable and secret API keys into `.env.local` as
+`NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` and `STRIPE_SECRET_KEY`, respectively.
+
+In Stripe Dashboard, open the Product catalog. For each plan you want to offer:
+
+1. Create a Product, for example `My SaaS - Basic Plan`, `My SaaS - Premium Plan`, or `My SaaS - All In Plan`.
+2. Add one flat-rate **recurring** Price with your currency and billing
+   interval, such as monthly.
+3. Copy its `price_...` ID into the matching variable in `.env.local`.
+
+4. Update the matching display copy in `src/lib/stripe/config.ts`. Landing-page
+   prices are intentionally not fetched from Stripe.
+
+The starter supports these plan variables:
 
 ```text
-basic
-premium
-all_in
+STRIPE_BASIC_PRICE_ID
+STRIPE_PREMIUM_PRICE_ID
+STRIPE_ALL_IN_PRICE_ID
 ```
 
-Add the Price IDs below. The UI shows only configured plans; at least one is
-required. Enable Stripe Customer Portal for billing management.
+At least one plan must have a configured Stripe Price ID.
 
-Add a Stripe webhook:
+### Configure Customer Portal
+
+Search for Customer Portal settings and activate **Customers can switch plans**.
+Add the products you created, then review the other portal settings as well.
+
+The starter already creates Customer Portal sessions from its Billing page and
+synchronizes plan changes through `customer.subscription.updated`.
+
+### Create a Webhook
+
+Go to Developers > Webhooks > Add Destination > API Version `2026-08-26.dahlia`
+
+**Subscribe to:**
+
+```text
+customer.subscription.created
+customer.subscription.deleted
+customer.subscription.paused
+customer.subscription.resumed
+customer.subscription.updated
+```
+
+**Add endpoint:**
 
 ```text
 https://<your-public-app-url>/api/webhooks/stripe
 ```
 
-Subscribe it to:
+For local testing, use the same ngrok URL (as on Clerk):
 
 ```text
-customer.subscription.created
-customer.subscription.updated
-customer.subscription.paused
-customer.subscription.resumed
-customer.subscription.deleted
+https://<your-ngrok-url>/api/webhooks/stripe
 ```
 
-Copy its signing secret.
+Copy the webhook signing secret.
 
-### 5. Configure Environment Variables
+Add it to `.env.local` as `STRIPE_WEBHOOK_SECRET`.
 
-Create `.env.local` in the repository root:
+### Discount Coupon
 
-```env
-# Public application URLs
-FRONTEND_URL=http://localhost:3000
-BACKEND_URL=http://127.0.0.1:8000
-NEXT_PUBLIC_GITHUB_URL=
+If you want to create a discount coupon (e.g. a demo 100% coupon) to be automatically applied to Stripe:
 
-# PostgreSQL
-DATABASE_URL=postgresql://...
+- Go to Dashboard > Product Catalog > Coupons
+- Create a coupon;
+- Set `STRIPE_DEMO_COUPON_ID` in `.env.local`
 
-# Clerk
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_...
-CLERK_SECRET_KEY=sk_...
-CLERK_WEBHOOK_SIGNING_SECRET=whsec_...
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
-NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/workspace/overview
-NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/workspace/overview
+## 8. Share your Repo (Optional)
 
-# Stripe
-STRIPE_SECRET_KEY=sk_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-STRIPE_BASIC_PRICE_ID=price_...
-STRIPE_PREMIUM_PRICE_ID=price_...
-STRIPE_ALL_IN_PRICE_ID=price_...
-# Optional: automatically apply a Stripe Coupon to Checkout demos
-STRIPE_DEMO_COUPON_ID=
-```
+- If you want to share your repository, for example as a portfolio project, add
+  its URL to `NEXT_PUBLIC_GITHUB_URL` in `.env.local`. This enables GitHub
+  links on the landing page and in the SaaS shell.
 
-`NEXT_PUBLIC_GITHUB_URL` is optional. The current starter uses Stripe-hosted
-Checkout, so it does not require `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`.
-`STRIPE_DEMO_COUPON_ID` is also optional; set it to a Stripe Coupon ID only
-when a demo should apply that discount automatically.
+## 9. Review Environment Variables
 
-Create `backend/.env`:
+Before running the application, confirm:
 
-```env
-# SQLAlchemy with Psycopg 3 requires the explicit driver prefix.
-DATABASE_URL="postgresql+psycopg://..."
-FRONTEND_URL=http://localhost:3000
-CLERK_JWKS_URL=https://<your-clerk-instance>/.well-known/jwks.json
-```
+- `.env.local` has the database URL, Clerk keys and webhook secret, application
+  URLs, Stripe secret/webhook secrets, and at least one Stripe Price ID.
+- `backend/.env` has the Psycopg 3 database URL, Clerk JWKS URL, and the same
+  `FRONTEND_URL` as `.env.local`.
+- Optional values are intentional: GitHub links are hidden without
+  `NEXT_PUBLIC_GITHUB_URL`, and no demo coupon is applied without
+  `STRIPE_DEMO_COUPON_ID`.
 
-Both `DATABASE_URL` values must point to the same PostgreSQL database, and both
-`FRONTEND_URL` values must match. The Next.js project uses `postgresql://...`;
-the FastAPI project must use `postgresql+psycopg://...`, which explicitly tells
-SQLAlchemy to use Psycopg 3.
+## 10. Apply Database Migrations
 
-### 6. Apply the Database Migrations
-
-Run this from the repository root:
+From the project root:
 
 ```bash
 npx drizzle-kit migrate
 ```
 
-After changing `src/lib/db/schema.ts`, generate, inspect, and apply a migration:
+When changing the Drizzle schema:
 
 ```bash
 npx drizzle-kit generate
@@ -342,148 +394,168 @@ npx drizzle-kit migrate
 
 Commit generated migrations with the schema change.
 
-### 7. Start the Application
+## 11. Run Locally
 
-Start FastAPI from the backend directory:
+Start FastAPI:
 
 ```bash
 cd backend
 uv run uvicorn main:app --reload --env-file .env
 ```
 
-In a second terminal, start Next.js:
+Start Next.js in another terminal:
 
 ```bash
 npm run dev
 ```
 
-The services are available at:
+Services:
 
 ```text
-Next.js: http://localhost:3000
-FastAPI: http://127.0.0.1:8000
-FastAPI health check: http://127.0.0.1:8000/healthy
+Next.js:  http://localhost:3000
+FastAPI:  http://127.0.0.1:8000
+Health:   http://127.0.0.1:8000/healthy
 ```
 
-### 8. Configure Local Webhook Forwarding
+## 12. Verify the Starter
 
-Clerk and Stripe need a public HTTPS URL. For local development, expose
-`http://localhost:3000` through a tunnel and update both webhook URLs.
+Before building product features, verify the complete SaaS foundation:
 
-Alternatively, the Stripe CLI can forward Stripe events locally:
+- Sign up through Clerk
+- Confirm the user is synchronized to PostgreSQL
+- Select a subscription plan
+- Complete Stripe Checkout
+  - **Important:** If you did not set a 100% coupon, fill out the credit card
+    form with:
+    - Card number: 4242 4242 4242 4242
+    - MM/YY: Any future date
+    - CVC: Any three digits
+
+### Verify:
+
+- Confirm the subscription is synchronized to PostgreSQL
+- Open the protected workspace
+- Confirm the protected FastAPI request works (mock data overview)
+- Open Stripe Customer Portal from Billing
+- Confirm account management works
+
+Once these work, the SaaS foundation is ready.
+
+---
+
+# Building Your Product
+
+The Starter Kit intentionally separates SaaS infrastructure from product logic.
+
+```text
+Next.js
+  → SaaS infrastructure + UI
+
+FastAPI
+  → Product/domain/AI logic
+```
+
+For an AI SaaS, product features such as these belong primarily in the FastAPI layer:
+
+```text
+Document ingestion
+Retrieval / RAG
+Embeddings
+Conversations
+LLM calls
+Agents
+Streaming
+Product-specific APIs
+```
+
+The existing authentication, users, subscriptions, billing, and authorization infrastructure can remain unchanged.
+
+## Database Ownership
+
+SaaS tables such as:
+
+```text
+users
+subscriptions
+```
+
+are owned by Drizzle.
+
+FastAPI may query them through SQLAlchemy but should not migrate them.
+
+Product-specific tables can be introduced as the product architecture evolves.
+
+---
+
+# Development Checks
+
+Frontend:
 
 ```bash
-stripe listen --forward-to localhost:3000/api/webhooks/stripe
-```
-
-Use the printed signing secret as `STRIPE_WEBHOOK_SECRET` while it runs.
-
-### 9. Verify the Full Flow
-
-1. Open `http://localhost:3000` and choose a configured plan.
-2. Sign up or sign in through Clerk.
-3. Complete Stripe Checkout using test mode.
-4. Confirm the Stripe webhook creates or updates a subscription row.
-5. Confirm `/workspace/overview` loads the protected FastAPI-backed sample data.
-6. Open Billing and confirm that **Manage billing** opens Stripe Customer Portal.
-7. Delete a Clerk user and confirm its local user and Stripe customer are
-   removed.
-
-## Authorization Model
-
-The `(subscribed)` layout protects app pages in Next.js. FastAPI product routes
-apply the same locally synchronized subscription state independently.
-
-For a new product page, use the Next.js helper when the page itself needs a
-plan requirement:
-
-```tsx
-await requireCurrentUserSubscriptionPlan(SubscriptionPlan.Basic);
-```
-
-For a new FastAPI router, apply the corresponding dependency:
-
-```python
-app.include_router(
-    product.router,
-    dependencies=[Depends(require_subscription_plan(SubscriptionPlan.BASIC))],
-)
-```
-
-Do not trust a browser-supplied user ID for an authenticated API request.
-
-## Development Checks
-
-```bash
-# Next.js
 npm run lint
 npx tsc --noEmit
+```
 
-# FastAPI
+Backend:
+
+```bash
 uv run --project backend black --check backend
 uv run --project backend isort --check-only backend
 ```
 
-## Production Checklist
+Before committing:
 
-### PostgreSQL / Supabase
+```bash
+git status
+git diff
+```
 
-- Keep `DATABASE_URL` server-only. Never expose it with a `NEXT_PUBLIC_`
-  prefix or connect to PostgreSQL from the browser.
-- If using Supabase, configure Database Network Restrictions to allow only the
-  deployed services' known egress IP ranges. This limits direct Postgres and
-  pooler connections before database authentication.
-- Supabase browser API origin settings are not relevant here: this starter does
-  not use Supabase APIs or the Supabase client SDK.
+---
 
-### Clerk
+# Production Notes
 
-- Create and activate a Clerk Production instance for the production domain.
-- Replace development keys with the production instance's `pk_live_` and
-  `sk_live_` keys in the deployment environment, then redeploy.
-- Configure the production domain, OAuth callback URLs, redirect URLs, and
-  production Clerk webhook endpoint.
-- Update `CLERK_JWKS_URL` and `CLERK_WEBHOOK_SIGNING_SECRET` with values from
-  the production instance.
+When using the Starter Kit for a real production application:
 
-## Extending a Clone
+- Update Frontend and Backend URL env vars.
+- Update Clerk and Stripe webhook endpoints.
+- Keep database credentials server-side.
+- Never expose `DATABASE_URL` through `NEXT_PUBLIC_*`.
+- Use production Clerk credentials and configure the production domain/webhook.
+- Use Stripe live credentials and a production webhook.
+- Configure the PostgreSQL provider's appropriate production security controls.
+- Store all secrets in the deployment environment.
+- Test authentication, billing, webhooks, and authorization end to end.
 
-Keep SaaS concerns in Next.js and add product/domain features to FastAPI. An AI
-product can add ingestion, retrieval, conversations, agents, and streaming
-under `backend/` while reusing the starter's SaaS foundation.
+---
 
-### Add a Product API Feature
+# Philosophy
 
-1. Create a FastAPI router in `backend/routers/` with the product endpoint.
-2. Include the router in `backend/main.py` with the appropriate
-   `require_subscription_plan(...)` dependency. Keep `/healthy` public.
-3. Create a typed server-side fetch function in `src/lib/backend/` that calls
-   the new endpoint through `fetchBackendData`.
-4. Call that function from a subscribed page or component. FastAPI obtains the
-   authenticated user from the Clerk JWT; do not pass a trusted user ID from
-   the browser.
+The Starter Kit owns the repetitive SaaS infrastructure.
 
-### Add Product Routes
+Your product should own what makes the application unique.
 
-Use `src/lib/routes.ts` for shared static destinations. For a dynamic product
-route, add a route function that accepts the ID and create the matching Next.js
-folder, for example `workspace/items/[itemId]/page.tsx`. Use the route function
-for sidebar and navigation links so a path change has one source of truth.
+```text
+Clone the Starter Kit
+        ↓
+Configure infrastructure
+        ↓
+Verify the SaaS foundation
+        ↓
+Build the actual product
+        ↓
+Ship
+```
 
-### Change Subscription Plans
+**Build the SaaS infrastructure once. Build products on top of it.**
 
-To configure an existing plan, create its recurring Stripe Price, set the
-matching `STRIPE_*_PRICE_ID`, and update its display copy in
-`src/lib/stripe/config.ts`.
+# Roadmap
 
-To add a new plan, update all of the following together:
+## v1.1 — Organizations / Teams
 
-1. `SubscriptionPlan` in `src/types/database.ts` and the Drizzle enum in
-   `src/lib/db/schema.ts`, then generate and apply a migration.
-2. The matching SQLAlchemy `SubscriptionPlan` enum and plan levels in
-   `backend/db/models.py` and `backend/auth/subscription.py`.
-3. The Stripe Price ID and pricing copy in `src/lib/stripe/config.ts`.
-4. The recurring Price in Stripe.
+Extend the starter for B2B SaaS applications with:
 
-Do not remove or rename an already-issued plan value without first planning a
-database and Stripe migration for existing subscriptions.
+- Organizations / workspaces
+- Organization memberships
+- Roles and permissions
+- Organization-scoped subscriptions
+- Organization-scoped product data
