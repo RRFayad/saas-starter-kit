@@ -513,6 +513,29 @@ FastAPI may query them through SQLAlchemy but should not migrate them.
 
 Product-specific tables can be introduced as the product architecture evolves.
 
+## Designing Product Screens
+
+The authenticated app shell (sidebar, top header, grey content area) is already implemented in code. Its design lives in the [App Shell canvas](https://claude.ai/artifact/HWhacGtes2kTC143kN4aUk) in Claude Design: desktop expanded, desktop collapsed, and mobile with the menu closed and open.
+
+Each page renders inside the content area as a page header followed by its own white card(s):
+
+```text
+Sidebar | Header (breadcrumb, theme toggle, GitHub)
+        | Grey content area
+        |   Page header (title + description)
+        |   White card → page content
+```
+
+To design and build a new product screen:
+
+1. **Create your canvas** — open the App Shell canvas, export it with **Share › Export › HTML (.zip)**, extract it, and ask Claude Code to create your own Claude Design canvas from the extracted files. The new canvas lives in your account and is fully editable.
+2. **Design** — on that canvas, add frames for your product screens with `/design`, stating that each screen lives inside the shell's content area so only the page content is new.
+3. **Iterate** — refine the frames in the canvas until the screens are right.
+4. **Implement** — paste your canvas link into Claude Code and ask it to implement the screens. `AGENTS.md` tells the agent how a new page plugs into the shell.
+5. **Keep code as the source of truth** — once implemented, the code wins; the canvas is a reference.
+
+The shell design stays neutral on purpose: re-skin a new SaaS through the theme tokens in `src/app/globals.css` (`--primary`, `--radius`, fonts) rather than by editing the shell components.
+
 ---
 
 # Development Checks

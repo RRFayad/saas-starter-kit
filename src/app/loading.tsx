@@ -5,7 +5,7 @@ const styles = {
   page: tw("mx-auto w-full max-w-7xl space-y-8 p-4 lg:p-6"),
   header: tw("space-y-3"),
   eyebrow: tw("h-4 w-24"),
-  title: tw("h-9 w-72 max-w-full"),
+  title: tw("h-8 w-72 max-w-full"),
   description: tw("h-5 w-full max-w-2xl"),
   cards: tw("grid gap-4 sm:grid-cols-2 xl:grid-cols-4"),
   card: tw("h-36 rounded-xl"),

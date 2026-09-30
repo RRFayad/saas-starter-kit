@@ -15,7 +15,7 @@ type SubscribedLayoutProps = {
 
 const styles = {
   inset: tw("min-h-svh"),
-  content: tw("flex-1 bg-muted/50 p-4 lg:p-6"),
+  content: tw("flex-1 bg-muted/70 p-4 lg:p-6 dark:bg-background"),
 };
 
 const SubscribedLayout = async ({ children }: SubscribedLayoutProps) => {

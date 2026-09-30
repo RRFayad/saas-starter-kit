@@ -48,6 +48,23 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
   components in `src/components/subscribed/`, and theme components in
   `src/components/theme/`.
 
+## Implementing Designs
+
+- The app shell is code-owned; its visual reference is the
+  [App Shell canvas](https://claude.ai/artifact/HWhacGtes2kTC143kN4aUk).
+  Implement a design's page content inside the existing shell and change the
+  shell only when the request asks for it.
+- A new subscribed page lives under `src/app/(subscribed)/` and is wired in
+  three places: its path in `src/lib/routes.ts`, its nav item in
+  `src/components/app-sidebar.tsx`, and its breadcrumb in `routeContext` in
+  `src/components/subscribed/app-header.tsx`.
+- Pages follow the existing page pattern: a `mx-auto w-full max-w-7xl`
+  container, `PageHeader`, then white cards styled like the ones in
+  `src/components/subscribed/billing.tsx`.
+- Translate design colors, radii, and fonts to theme tokens (`bg-card`,
+  `text-muted-foreground`, `border`, `bg-primary`, `rounded-xl`) so light and
+  dark themes both follow.
+
 ## Authentication and Billing
 
 - Clerk webhooks synchronize `users` in PostgreSQL.

@@ -9,11 +9,9 @@ type PageHeaderProps = {
 };
 
 const styles = {
-  wrapper: tw(
-    "mt-2 flex flex-col justify-between gap-4 sm:flex-row sm:items-end",
-  ),
-  title: tw("text-3xl font-semibold tracking-tight"),
-  description: tw("mt-2 max-w-6xl text-sm text-muted-foreground"),
+  wrapper: tw("flex flex-col justify-between gap-4 sm:flex-row sm:items-end"),
+  title: tw("text-2xl font-semibold tracking-tight"),
+  description: tw("mt-2 max-w-2xl text-sm text-muted-foreground"),
   action: tw("w-fit"),
 };
 
