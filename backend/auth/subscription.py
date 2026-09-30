@@ -5,6 +5,9 @@ from starlette import status
 from auth.auth import current_user_dependency
 from db.database import db_dependency
 from db.models import Subscription, SubscriptionPlan
+from utils import get_boolean_env_var
+
+billing_enabled = get_boolean_env_var("BILLING_ENABLED")
 
 SUBSCRIPTION_PLAN_LEVELS = {
     SubscriptionPlan.BASIC: 1,
@@ -18,7 +21,10 @@ def require_subscription_plan(required_plan: SubscriptionPlan):
     def dependency(
         db: db_dependency,
         user: current_user_dependency,
-    ) -> Subscription:
+    ) -> Subscription | None:
+        if not billing_enabled:
+            return None
+
         subscription = db.scalar(
             select(Subscription).where(Subscription.user_id == user.id)
         )

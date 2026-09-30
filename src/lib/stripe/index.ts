@@ -5,13 +5,17 @@ import type { User } from "@/types/database";
 import { getEnvVar, getErrorMessageAndThrow } from "../utils";
 import { addStripeCustomerIdToUserDb } from "../user/user";
 
-const stripeSecretKey = getEnvVar("STRIPE_SECRET_KEY");
 const stripeDiscountCoupon = getEnvVar("STRIPE_DEMO_COUPON_ID", false);
+let stripeClient: Stripe | undefined;
 
-export const stripe = new Stripe(stripeSecretKey);
+const getStripe = (): Stripe => {
+  stripeClient ??= new Stripe(getEnvVar("STRIPE_SECRET_KEY"));
+
+  return stripeClient;
+};
 
 export const createStripeCustomer = async (user: User) => {
-  const stripeCustomer = await stripe.customers.create(
+  const stripeCustomer = await getStripe().customers.create(
     {
       email: user.email,
       metadata: {
@@ -27,14 +31,14 @@ export const createStripeCustomer = async (user: User) => {
 };
 
 export const deleteStripeCustomer = async (customerId: string) => {
-  await stripe.customers.del(customerId);
+  await getStripe().customers.del(customerId);
 };
 
 export const updateStripeCustomerEmail = async (
   customerId: string,
   email: string,
 ) => {
-  await stripe.customers.update(customerId, { email });
+  await getStripe().customers.update(customerId, { email });
 };
 
 export const createStripeCheckoutSession = async ({
@@ -64,7 +68,7 @@ export const createStripeCheckoutSession = async ({
 
   const customerId = (user.stripeCustomerId || updatedUser?.stripeCustomerId)!;
 
-  const session = await stripe.checkout.sessions.create({
+  const session = await getStripe().checkout.sessions.create({
     customer: customerId,
     mode: "subscription",
 
@@ -98,7 +102,7 @@ export const createStripeCustomerPortalSession = async ({
   customerId: string;
   returnUrl: string;
 }) => {
-  const session = await stripe.billingPortal.sessions.create({
+  const session = await getStripe().billingPortal.sessions.create({
     customer: customerId,
     return_url: returnUrl,
   });

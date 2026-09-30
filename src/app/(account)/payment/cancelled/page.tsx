@@ -3,8 +3,10 @@ import { CircleXIcon } from "lucide-react";
 
 import { RedirectAfterDelay } from "@/components/payment/redirect-after-delay";
 import { Button } from "@/components/ui/button";
-import { tw } from "@/lib/utils";
+import { featureFlags } from "@/lib/feature-flags";
 import { routes } from "@/lib/routes";
+import { tw } from "@/lib/utils";
+import { redirect } from "next/navigation";
 
 const styles = {
   page: tw("flex min-h-screen items-center justify-center bg-muted/20 px-4"),
@@ -18,6 +20,10 @@ const styles = {
 };
 
 const Cancelled = () => {
+  if (!featureFlags.billingEnabled) {
+    redirect(routes.workspace.overview);
+  }
+
   return (
     <main className={styles.page}>
       <section className={styles.card}>

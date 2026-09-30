@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { AppHeader } from "@/components/subscribed/app-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { featureFlags } from "@/lib/feature-flags";
 import { siteConfig } from "@/lib/site-config";
 import { requireCurrentUserSubscriptionPlan } from "@/lib/subscription/subscription";
 import { SubscriptionPlan } from "@/types/database";
@@ -22,7 +23,7 @@ const SubscribedLayout = async ({ children }: SubscribedLayoutProps) => {
 
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar billingEnabled={featureFlags.billingEnabled} />
       <SidebarInset className={styles.inset}>
         <AppHeader github={siteConfig.github} />
         <div className={styles.content}>{children}</div>

@@ -1,19 +1,23 @@
 import Stripe from "stripe";
 
 import { NextRequest, NextResponse } from "next/server";
+import { featureFlags } from "@/lib/feature-flags";
 import { getEnvVar } from "@/lib/utils";
 import { handleSubscriptionUpsert } from "@/lib/stripe/webhook-handlers";
 
-const WEBHOOK_SECRET = getEnvVar("STRIPE_WEBHOOK_SECRET");
+export const POST = async (req: NextRequest) => {
+  if (!featureFlags.billingEnabled) {
+    return new NextResponse(null, { status: 404 });
+  }
 
-export async function POST(req: NextRequest) {
   const payload = await req.text();
+  const webhookSecret = getEnvVar("STRIPE_WEBHOOK_SECRET");
 
   const signature = req.headers.get("stripe-signature") as string;
 
   let event: Stripe.Event;
   try {
-    event = Stripe.webhooks.constructEvent(payload, signature, WEBHOOK_SECRET);
+    event = Stripe.webhooks.constructEvent(payload, signature, webhookSecret);
   } catch (err) {
     console.error("Webhook signature verification failed.", err);
     return NextResponse.json(
@@ -36,4 +40,4 @@ export async function POST(req: NextRequest) {
   }
 
   return NextResponse.json({ received: true });
-}
+};

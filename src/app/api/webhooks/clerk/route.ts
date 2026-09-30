@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
+import { featureFlags } from "@/lib/feature-flags";
 import { deleteStripeCustomer, updateStripeCustomerEmail } from "@/lib/stripe";
 import { getUserByClerkId } from "@/lib/user/user";
 import { NextRequest } from "next/server";
@@ -42,7 +43,11 @@ const handleUserUpdated = async (user: UserJSON) => {
   const name = [user.first_name, user.last_name].filter(Boolean).join(" ");
   const dbUser = await getUserByClerkId(user.id);
 
-  if (dbUser?.stripeCustomerId && dbUser.email !== primaryEmail.email_address) {
+  if (
+    featureFlags.billingEnabled &&
+    dbUser?.stripeCustomerId &&
+    dbUser.email !== primaryEmail.email_address
+  ) {
     await updateStripeCustomerEmail(
       dbUser.stripeCustomerId,
       primaryEmail.email_address,
@@ -66,7 +71,7 @@ const handleUserDeleted = async (user: DeletedObjectJSON) => {
 
   const dbUser = await getUserByClerkId(user.id);
 
-  if (dbUser?.stripeCustomerId) {
+  if (featureFlags.billingEnabled && dbUser?.stripeCustomerId) {
     await deleteStripeCustomer(dbUser.stripeCustomerId);
   }
 

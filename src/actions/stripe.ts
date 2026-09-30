@@ -15,6 +15,7 @@ import {
   getSubscriptionByUserId,
   isSubscriptionActive,
 } from "@/lib/subscription/subscription";
+import { featureFlags } from "@/lib/feature-flags";
 import { getEnvVar } from "@/lib/utils";
 import type { SubscriptionPlan } from "@/types/database";
 
@@ -33,6 +34,10 @@ const redirectToCustomerPortal = async (customerId: string): Promise<never> => {
 };
 
 export const checkout = async (formData: FormData) => {
+  if (!featureFlags.billingEnabled) {
+    redirect(routes.workspace.overview);
+  }
+
   const { userId: clerkUserId } = await auth();
 
   if (!clerkUserId) {
@@ -79,6 +84,10 @@ export const checkout = async (formData: FormData) => {
 };
 
 export const customerPortal = async () => {
+  if (!featureFlags.billingEnabled) {
+    redirect(routes.workspace.overview);
+  }
+
   const { userId: clerkUserId } = await auth();
 
   if (!clerkUserId) {

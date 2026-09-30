@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import { StartCheckout } from "./start-checkout";
+import { featureFlags } from "@/lib/feature-flags";
 import { getAvailableStripePlans } from "@/lib/stripe/config";
 import { routes } from "@/lib/routes";
 import { tw } from "@/lib/utils";
@@ -15,6 +16,10 @@ const styles = {
 };
 
 const CheckoutPage = async ({ searchParams }: CheckoutPageProps) => {
+  if (!featureFlags.billingEnabled) {
+    redirect(routes.workspace.overview);
+  }
+
   const { plan } = await searchParams;
   const selectedPlan =
     typeof plan === "string"

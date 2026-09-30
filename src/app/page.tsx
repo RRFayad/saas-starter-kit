@@ -35,6 +35,7 @@ import { TextReveal } from "@/components/velora/text-reveal";
 import { TiltCard } from "@/components/velora/tilt-card";
 import { Typewriter } from "@/components/velora/typewriter";
 import { siteConfig } from "@/lib/site-config";
+import { featureFlags } from "@/lib/feature-flags";
 import { routes } from "@/lib/routes";
 import { getAvailableStripePlans } from "@/lib/stripe/config";
 import { tw } from "@/lib/utils";
@@ -101,8 +102,6 @@ const faqs = [
     a: "Yes. The FastAPI backend provides a natural place for Python-based AI and product logic. AI-specific infrastructure such as LangChain, LangGraph, conversations, streaming, and usage tracking is planned separately rather than being bundled into the core SaaS foundation.",
   },
 ];
-
-const availablePlans = getAvailableStripePlans();
 
 const styles = {
   page: tw("relative"),
@@ -207,11 +206,19 @@ const styles = {
 };
 
 const LandingPage = async () => {
+  if (!featureFlags.landingPageEnabled) {
+    redirect(routes.workspace.overview);
+  }
+
   const { userId } = await auth();
 
   if (userId) {
     redirect(routes.workspace.overview);
   }
+
+  const availablePlans = featureFlags.billingEnabled
+    ? getAvailableStripePlans()
+    : [];
 
   return (
     <>
@@ -452,24 +459,25 @@ const LandingPage = async () => {
           </div>
         </section>
 
-        {/* Pricing */}
-        <section id="pricing" className={styles.section}>
-          <div className={styles.content}>
-            <BlurFade>
-              <h2 className={styles.sectionHeading}>
-                Plans built for{" "}
-                <span className={styles.accent}>your product.</span>
-              </h2>
-              <p className={styles.sectionDescription}>
-                Customizable plans already wired to real Stripe data - Checkout,
-                webhooks, subscription synchronization, and billing
-                management.{" "}
-              </p>
-            </BlurFade>
+        {featureFlags.billingEnabled && (
+          <section id="pricing" className={styles.section}>
+            <div className={styles.content}>
+              <BlurFade>
+                <h2 className={styles.sectionHeading}>
+                  Plans built for{" "}
+                  <span className={styles.accent}>your product.</span>
+                </h2>
+                <p className={styles.sectionDescription}>
+                  Customizable plans already wired to real Stripe data -
+                  Checkout, webhooks, subscription synchronization, and billing
+                  management.{" "}
+                </p>
+              </BlurFade>
 
-            <PricingCards plans={availablePlans} />
-          </div>
-        </section>
+              <PricingCards plans={availablePlans} />
+            </div>
+          </section>
+        )}
 
         {/* FAQ */}
         <section id="faq" className={styles.faq.section}>

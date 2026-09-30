@@ -152,6 +152,10 @@ Start with these templates. Fill each value in the relevant setup step below.
 FRONTEND_URL=http://localhost:3000
 BACKEND_URL=http://127.0.0.1:8000
 
+# Features
+LANDING_PAGE_ENABLED=true
+BILLING_ENABLED=true
+
 # Database
 DATABASE_URL=postgresql://...
 
@@ -167,7 +171,7 @@ CLERK_SECRET_KEY=sk_test_...
 CLERK_WEBHOOK_SIGNING_SECRET=whsec_...
 CLERK_JWKS_URL=https://<your-clerk-instance>/.well-known/jwks.json
 
-# Stripe
+# Stripe: required only when BILLING_ENABLED=true
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test...
 STRIPE_SECRET_KEY=sk_test_...
 
@@ -194,10 +198,32 @@ NEXT_PUBLIC_GITHUB_URL=
 DATABASE_URL="postgresql+psycopg://..."
 CLERK_JWKS_URL=https://<your-clerk-instance>/.well-known/jwks.json
 FRONTEND_URL=http://localhost:3000
+
+# Keep this aligned with .env.local.
+BILLING_ENABLED=true
 ```
 
 The two database URLs must target the same PostgreSQL database. Next.js uses
 `postgresql://...`; FastAPI uses `postgresql+psycopg://...`.
+
+### Feature Flags
+
+Both flags must be exactly `true` or `false`.
+
+| `LANDING_PAGE_ENABLED` | `BILLING_ENABLED` | Use case                         |
+| ---------------------- | ----------------- | -------------------------------- |
+| `true`                 | `true`            | Normal commercial SaaS           |
+| `true`                 | `false`           | Free product or portfolio app    |
+| `false`                | `false`           | Internal or private app          |
+| `false`                | `true`            | Invite-only or private paid SaaS |
+
+`LANDING_PAGE_ENABLED` controls whether `/` shows the marketing page. When it
+is disabled, `/` redirects to the authenticated workspace.
+
+`BILLING_ENABLED` controls pricing, Checkout, Customer Portal, Stripe webhooks,
+and subscription authorization. Set it to the same value in `.env.local` and
+`backend/.env`. When it is `false`, Stripe environment variables are not
+required.
 
 ## 4. Install Dependencies
 

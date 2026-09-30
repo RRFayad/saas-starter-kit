@@ -63,10 +63,19 @@ const styles = {
   accountEmail: tw("mt-0.5 truncate text-xs text-sidebar-foreground/60"),
 };
 
-export const AppSidebar = () => {
+type AppSidebarProps = {
+  billingEnabled: boolean;
+};
+
+export const AppSidebar = ({ billingEnabled }: AppSidebarProps) => {
   const pathname = usePathname();
   const { user } = useUser();
   const { isMobile, state } = useSidebar();
+  const visibleSettingsNavigation = billingEnabled
+    ? settingsNavigation
+    : settingsNavigation.filter(
+        (item) => item.href !== routes.settings.billing,
+      );
   const accountName = user?.fullName ?? user?.firstName ?? "Signed in";
   const accountEmail = user?.primaryEmailAddress?.emailAddress;
 
@@ -106,7 +115,7 @@ export const AppSidebar = () => {
         <SidebarGroupLabel>Settings</SidebarGroupLabel>
         <SidebarGroupContent>
           <SidebarMenu>
-            {settingsNavigation.map((item) => (
+            {visibleSettingsNavigation.map((item) => (
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
                   isActive={pathname === item.href}

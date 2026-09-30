@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { PricingCards } from "@/components/marketing/pricing-cards";
+import { featureFlags } from "@/lib/feature-flags";
 import { routes } from "@/lib/routes";
 import { getAvailableStripePlans } from "@/lib/stripe/config";
 import {
@@ -17,6 +18,10 @@ const styles = {
 };
 
 const PricingPage = async () => {
+  if (!featureFlags.billingEnabled) {
+    redirect(routes.workspace.overview);
+  }
+
   const subscription = await getCurrentUserSubscription();
 
   if (isSubscriptionActive(subscription)) {

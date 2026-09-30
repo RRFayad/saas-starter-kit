@@ -44,6 +44,20 @@ export const getEnvVar = ((
   return value;
 }) as GetEnvVar;
 
+export const getBooleanEnvVar = (name: string): boolean => {
+  const value = getEnvVar(name);
+
+  if (value === "true") {
+    return true;
+  }
+
+  if (value === "false") {
+    return false;
+  }
+
+  throw new Error(`${name} must be set to true or false`);
+};
+
 export const getErrorMessageAndThrow = (
   logMessage: string,
   error: unknown,

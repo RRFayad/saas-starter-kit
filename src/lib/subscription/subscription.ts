@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { subscriptions } from "@/lib/db/schema";
 import { Subscription, SubscriptionPlan } from "@/types/database";
+import { featureFlags } from "@/lib/feature-flags";
 import { getCurrentUser } from "../user/user";
 import { routes } from "@/lib/routes";
 
@@ -75,6 +76,10 @@ export const requireCurrentUserSubscriptionPlan = async (
 
   if (!userId) {
     redirect(routes.signIn);
+  }
+
+  if (!featureFlags.billingEnabled) {
+    return;
   }
 
   if (!(await canCurrentUserAccessSubscriptionPlan(requiredPlan))) {
