@@ -309,7 +309,7 @@ Copy the webhook signing secret.
 
 Add it to `.env.local` as `CLERK_WEBHOOK_SIGNING_SECRET`.
 
-## 7. Configure Stripe
+## 7. Configure Stripe (Optional - Required when `BILLING_ENABLED=true`)
 
 Use **Test mode** while setting up the starter. You do not need to create
 customers or subscriptions manually; the application creates them through
@@ -428,7 +428,7 @@ Start FastAPI:
 
 ```bash
 cd backend
-uv run uvicorn main:app --reload --env-file .env
+uv run fastapi dev
 ```
 
 Start Next.js in another terminal:
@@ -451,7 +451,8 @@ Before building product features, verify the complete SaaS foundation:
 
 - Sign up through Clerk
 - Confirm the user is synchronized to PostgreSQL
-- Select a subscription plan
+- Select a subscription plan 
+(If Stripe is configured)
 - Complete Stripe Checkout
   - **Important:** If you did not set a 100% coupon, fill out the credit card
     form with:
