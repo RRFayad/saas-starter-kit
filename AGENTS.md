@@ -42,6 +42,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Application-owned Tailwind styles belong in a local `styles` object and must
   be wrapped with `tw()` so Prettier sorts the classes.
 - Use `cn()` only for runtime conditional class merging.
+- Give user feedback with `showToast({ type, title, message })` from
+  `src/components/toaster.tsx`; `type` is `success`, `warning`, or `error`.
+  Call it directly in the client component that handles the action. Server
+  actions return a result, and the calling client component turns it into a
+  toast.
 - Do not refactor copied shadcn/ui components in `src/components/ui/` or Velora
   components in `src/components/velora/` into the application styling pattern.
 - Keep marketing components in `src/components/marketing/`, subscribed-app

@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 
 import { PageHeader } from "@/components/subscribed/page-header";
+import { BackendHealthButton } from "@/components/subscribed/backend-health-button";
 import type { DashboardData } from "@/lib/backend/dashboard";
 import { tw } from "@/lib/utils";
 
@@ -24,6 +25,7 @@ const metricIcons = {
 
 const styles = {
   page: tw("mx-auto w-full max-w-7xl space-y-8"),
+  headerActions: tw("flex items-center gap-3"),
   sampleBadge: tw(
     "w-fit rounded-full border border-dashed bg-muted/60 px-3 py-1 text-xs text-muted-foreground",
   ),
@@ -76,7 +78,12 @@ export const Overview = ({ dashboardData }: OverviewProps) => {
       <PageHeader
         title="Your business at a glance"
         description={description}
-        action={<span className={styles.sampleBadge}>Sample data</span>}
+        action={
+          <div className={styles.headerActions}>
+            <BackendHealthButton />
+            <span className={styles.sampleBadge}>Sample data</span>
+          </div>
+        }
       />
 
       {dashboardData ? (
