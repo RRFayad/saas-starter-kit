@@ -23,7 +23,10 @@ const SubscribedLayout = async ({ children }: SubscribedLayoutProps) => {
 
   return (
     <SidebarProvider>
-      <AppSidebar billingEnabled={featureFlags.billingEnabled} />
+      <AppSidebar
+        appName={siteConfig.name}
+        billingEnabled={featureFlags.billingEnabled}
+      />
       <SidebarInset className={styles.inset}>
         <AppHeader github={siteConfig.github} />
         <div className={styles.content}>{children}</div>

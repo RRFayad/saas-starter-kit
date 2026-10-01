@@ -64,10 +64,11 @@ const styles = {
 };
 
 type AppSidebarProps = {
+  appName: string;
   billingEnabled: boolean;
 };
 
-export const AppSidebar = ({ billingEnabled }: AppSidebarProps) => {
+export const AppSidebar = ({ appName, billingEnabled }: AppSidebarProps) => {
   const pathname = usePathname();
   const { user } = useUser();
   const { isMobile, state } = useSidebar();
@@ -84,7 +85,7 @@ export const AppSidebar = ({ billingEnabled }: AppSidebarProps) => {
       <SidebarHeader className={styles.header}>
         <Link href={routes.workspace.overview} className={styles.brand}>
           <SparklesIcon className={styles.brandIcon} />
-          <span className={styles.brandLabel}>SaaS Starter Kit</span>
+          <span className={styles.brandLabel}>{appName}</span>
         </Link>
         {!isMobile && state === "expanded" && (
           <SidebarTrigger className={styles.desktopSidebarTrigger} />

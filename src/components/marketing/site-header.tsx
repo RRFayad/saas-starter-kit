@@ -17,7 +17,6 @@ const styles = {
   ),
   brand: tw("flex items-center font-semibold"),
   brandIcon: tw("mr-2 size-5 text-primary"),
-  brandPrefix: tw("mr-1 hidden sm:inline"),
   navigation: tw(
     "hidden items-center gap-6 text-sm text-muted-foreground md:flex",
   ),
@@ -31,7 +30,7 @@ export const SiteHeader = () => {
       <div className={styles.content}>
         <Link href={routes.home} className={styles.brand}>
           <SparklesIcon className={styles.brandIcon} />
-          <span className={styles.brandPrefix}>Full-Stack</span>SaaS Starter Kit
+          {siteConfig.name}
         </Link>
         <Show when="signed-out">
           <nav className={styles.navigation}>

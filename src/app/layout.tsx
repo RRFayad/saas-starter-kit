@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/toaster";
+import { siteConfig } from "@/lib/site-config";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 import { tw } from "@/lib/utils";
@@ -23,7 +24,7 @@ const styles = {
 };
 
 export const metadata: Metadata = {
-  title: "SaaS Starter Kit",
+  title: siteConfig.name,
   description: "A full-stack foundation for modern SaaS products.",
   icons: {
     icon: "/icon.svg",

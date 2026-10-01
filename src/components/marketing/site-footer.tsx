@@ -46,7 +46,7 @@ export const SiteFooter = () => {
       <div className={contentStyles}>
         <div>
           <Link href={routes.home} className={styles.brand}>
-            SaaS Starter Kit
+            {siteConfig.name}
           </Link>
           <p className={styles.description}>
             A full-stack foundation for building and shipping modern SaaS
