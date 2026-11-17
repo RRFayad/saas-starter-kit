@@ -11,6 +11,22 @@ jobs:
   check:
     runs-on: ubuntu-latest
 
+    # The API tests' database: same image as docker-compose.yml, on the port and
+    # credentials TEST_DATABASE_URL defaults to (localhost:5432, postgres/postgres).
+    services:
+      postgres:
+        image: pgvector/pgvector:pg18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
     steps:
       - uses: actions/checkout@v7
 
@@ -21,5 +37,5 @@ jobs:
 
       - run: npm ci
 
-      # Lint, plus type checks for the Next.js app, the API, and @app/shared.
+      # Lint, Prettier, type checks, and the API tests.
       - run: npm run check

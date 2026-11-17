@@ -10,8 +10,6 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 
 import { db } from "../db";
 
-const billingEnabled = getBooleanEnvVar("BILLING_ENABLED");
-
 // Returns a preHandler hook that requires an active subscription of at least
 // requiredPlan and exposes it as request.subscription. Runs after authenticate,
 // which sets request.user. Skipped when billing is disabled, so every signed-in
@@ -19,7 +17,8 @@ const billingEnabled = getBooleanEnvVar("BILLING_ENABLED");
 export const requireSubscriptionPlan =
   (requiredPlan: SubscriptionPlan) =>
   async (request: FastifyRequest, reply: FastifyReply) => {
-    if (!billingEnabled) {
+    // Read per request (not at import), so tests can switch billing per test.
+    if (!getBooleanEnvVar("BILLING_ENABLED")) {
       request.subscription = null;
       return;
     }

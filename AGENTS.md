@@ -121,15 +121,16 @@
   `<feature>.route.ts` (path, Zod schemas, Swagger metadata),
   `<feature>.controller.ts` (request handling), and `<feature>.service.ts`
   (business logic and Drizzle queries). Small features can skip layers.
-- Register routes in the matching scope in `backend/src/main.ts`: public;
+- Register routes in the matching scope in `backend/src/create-app.ts`: public;
   protected (`authenticate`, sets `request.user`); or subscribed
   (`requireSubscriptionPlan(...)`, sets `request.subscription`). Nest a scope
   for plan-gated routes.
 - Auth hooks run in `preHandler`, after `clerkPlugin` reads the token there; an
   `onRequest` hook sees no session.
-- Every route declares response schemas from `@app/shared/schemas`, including
-  `errorResponseSchema` for 401/403/404 on protected routes, and uses
-  `withTypeProvider<ZodTypeProvider>()`. Errors use the `{ detail }` body.
+- Every route declares its success response schema from `@app/shared/schemas`
+  and uses `withTypeProvider<ZodTypeProvider>()`. Routes don't list their error
+  codes: errors are thrown as `HttpError`, `errorHandler` sends them with the
+  `{ detail }` body, and the tests document which errors each route returns.
 - Services throw `HttpError(status, detail)` from `backend/src/errors.ts` for
   expected failures; no `try/catch` to shape errors. `errorHandler` sends every
   error as `{ detail }`: validation errors → 422, unexpected errors → logged,
@@ -137,7 +138,16 @@
 - Fastify treats `/path` and `/path/` as different routes; call routes without a
   trailing slash.
 - CORS accepts only `FRONTEND_URL`; keep it aligned with the Next.js app URL.
-- The API entry is `backend/src/main.ts`. Vercel deploys the esbuild bundle
+- Tests sit next to their feature (`backend/src/<feature>/<feature>.test.ts`)
+  and use the harness in `backend/src/testing/`: `startApi()` runs the real app
+  on a free port, `api.as(clerkId)` calls it over HTTP with axios, and
+  `createUser` / `createSubscription` seed rows. Clerk is the only mock. They
+  run against `app_test` on the Docker Postgres (created and migrated
+  automatically, truncated before each test), so Docker must be running.
+  `TEST_DATABASE_URL` overrides it. Billing is off; turn it on per test with
+  `vi.stubEnv("BILLING_ENABLED", "true")`.
+- `backend/src/create-app.ts` builds the app (plugins, hooks, route scopes);
+  the entry `backend/src/main.ts` only starts it. Vercel deploys the esbuild bundle
   from `npm run build` (`backend/server.js`), which inlines `@app/shared`
   because Node can't load its TypeScript source from `node_modules`. Vercel
   picks the entrypoint by file name, so never add `backend/src/app`, `backend/src/index`,
@@ -153,7 +163,8 @@
 Run relevant checks after changes:
 
 ```bash
-# Lint, Prettier, and type checks for the Next.js app, the API, and @app/shared
+# Lint, Prettier, type checks (Next.js app, API, @app/shared), and API tests
+# (needs Docker running)
 npm run check
 ```
 

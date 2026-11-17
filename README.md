@@ -103,11 +103,13 @@ frontend/src/          Next.js app (@app/frontend)
     user/              User queries
 
 backend/src/           Fastify API (@app/backend)
-  main.ts              App entry: setup, plugins, and route scopes
+  main.ts              App entry: starts the API
+  create-app.ts        Builds the app: plugins, hooks, and route scopes
   db.ts                Drizzle client
   auth/                Clerk authentication + subscription hooks
   dashboard/           Sample feature (route + controller)
   healthcheck/         Health check route
+  testing/             Test harness: test database, Clerk mock, HTTP client
 
 packages/shared/src/   Shared package (@app/shared)
   db/                  Drizzle schema, row types, and migrations
@@ -652,9 +654,11 @@ backend/src/<feature>/
   <feature>.service.ts      Business logic and database access (Drizzle)
 ```
 
-- **Route:** declares the path and attaches the request and response schemas
-  from `@app/shared/schemas`. The schemas validate every request and response
-  and generate the Swagger docs.
+- **Route:** declares the path and attaches the request schemas and the
+  success response schema from `@app/shared/schemas`. The schemas validate
+  every request and response and generate the Swagger docs. Routes don't list
+  error responses: every error has the same `{ detail }` body (see **Errors**
+  below), and the tests document which errors each route returns.
 - **Controller:** turns an HTTP request into a service call and the result
   into a response. It stays thin.
 - **Service:** holds the actual logic and queries, with no knowledge of HTTP,
@@ -677,7 +681,7 @@ throw new HttpError(404, "Source not found");
 Small features can skip a layer: `healthcheck` only has a route, and the sample
 `dashboard` has a route and a controller.
 
-Then register the routes in the right scope in `backend/src/main.ts`:
+Then register the routes in the right scope in `backend/src/create-app.ts`:
 
 | Scope      | Hooks                                                              | For                             |
 | ---------- | ------------------------------------------------------------------ | ------------------------------- |
@@ -698,6 +702,29 @@ export * from "./<feature>.schema";
 
 Imports stay `@app/shared/schemas`. The frontend uses the inferred types
 (`z.infer`), so a contract change shows up as a type error on both sides.
+
+**Tests:** add `<feature>.test.ts` next to the feature. Tests call the real API
+over HTTP; only Clerk is mocked, by signing in with a header:
+
+```ts
+import { createUser, startApi } from "../testing/api";
+
+it("lists the user's notes", async () => {
+  await createUser("reader"); // the users row Clerk's webhook would create
+
+  const response = await api.as("reader").get("/notes"); // api = await startApi()
+
+  expect(response.status).toBe(200);
+});
+```
+
+- Database → `app_test` on the Docker Postgres: created and migrated
+  automatically, emptied before each test → **Docker must be running**.
+- Billing → off by default; turn it on per test with
+  `vi.stubEnv("BILLING_ENABLED", "true")` and seed a plan with
+  `createSubscription(user.id, "premium")`.
+- Run → `npm test` (also part of `npm run check`).
+- Examples → `backend/src/auth/*.test.ts`.
 
 The `dashboard` feature is a sample endpoint: use it as a template for your
 first real feature, then delete it (its folder, `schemas/dashboard.schema.ts`
@@ -739,8 +766,8 @@ The shell design stays neutral on purpose: re-skin a new SaaS through the theme 
 
 # Development Checks
 
-Run all checks (lint, Prettier, and a type check for the Next.js app, the API,
-and the shared package):
+Run all checks (lint, Prettier, a type check for the Next.js app, the API, and
+the shared package, and the API tests). The tests need Docker running:
 
 ```bash
 npm run check
@@ -748,7 +775,8 @@ npm run build
 ```
 
 CI (`.github/workflows/ci.yml`) runs `npm run check` on every pull request and
-every push to `main`. It needs no secrets.
+every push to `main`, with a Postgres service for the tests. It needs no
+secrets.
 
 ---
 
