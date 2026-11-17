@@ -218,11 +218,12 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 # Optional: automatically apply a Stripe Coupon to Checkout demos
 STRIPE_DEMO_COUPON_ID=
 
+# Optional: shows the Clerk test-user hint on sign-up (demos on Clerk development keys)
+# true or false
+SIGN_UP_DEMO_MODE_ENABLED=
+
 # Optional: enables GitHub links on the landing page and in the SaaS shell
 NEXT_PUBLIC_GITHUB_URL=
-
-# Clerk webhook tunnel: created automatically by npm run dev (local)
-CLERK_WEBHOOK_RELAY_TOKEN=
 
 ```
 
@@ -265,6 +266,17 @@ is disabled, `/` redirects to the authenticated workspace.
 and subscription authorization. Set it to the same value in `frontend/.env.local` and
 `backend/.env`. When it is `false`, Stripe environment variables are not
 required.
+
+`SIGN_UP_DEMO_MODE_ENABLED` (optional, off unless `true`) prepares the sign-up page for
+demo visitors (see [Test users](#test-users-no-real-inbox)):
+
+- Fills in a fresh test email (`demo-<random>+clerk_test@example.com`) → each
+  visit is a new account.
+- Shows a hint above the form: no inbox needed, code `424242`.
+
+- Use it → public demos running on Clerk development keys (`pk_test_...`).
+- Never with production keys → test mode is off there, so the hint would be
+  wrong.
 
 ## 4. Install Dependencies
 
@@ -398,6 +410,20 @@ https://<your-public-app-url>/api/webhooks/clerk
 
 Copy that endpoint's signing secret into the deployment's environment variables
 (for example, Vercel). Each endpoint has its own secret.
+
+### Test users (no real inbox)
+
+| Sign up with                            | Verification code | Email/SMS sent |
+| --------------------------------------- | ----------------- | -------------- |
+| `<name>+clerk_test@example.com`         | `424242`          | No             |
+| Phone `+1 (XXX) 555-0100` to `555-0199` | `424242`          | No             |
+
+- Needs **test mode** → on by default in development instances (`pk_test_...`);
+  check Configure > Settings > "Enable test mode". Off in production instances.
+- Each address → a new Clerk user → a new `users` row (through the webhook).
+- Fresh account → change the part before `+`, e.g. `demo2+clerk_test@example.com`.
+- Public demo → `SIGN_UP_DEMO_MODE_ENABLED=true` shows this on the sign-up page (see
+  [Feature Flags](#feature-flags)).
 
 ## 7. Configure Stripe (Optional - Required when `BILLING_ENABLED=true`)
 
@@ -592,6 +618,8 @@ the browser console while signed in to the app
 Before building product features, verify the complete SaaS foundation:
 
 - Sign up through Clerk
+  - No inbox needed: `demo+clerk_test@example.com`, code `424242` (see
+    [Test users](#test-users-no-real-inbox))
 - Confirm the user is synchronized to PostgreSQL
 - Select a subscription plan (if billing is enabled)
 - Complete Stripe Checkout
