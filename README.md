@@ -725,13 +725,16 @@ The shell design stays neutral on purpose: re-skin a new SaaS through the theme 
 
 # Development Checks
 
-Run all checks (lint, plus a type check for the Next.js app, the API, and the
-shared package):
+Run all checks (lint, Prettier, and a type check for the Next.js app, the API,
+and the shared package):
 
 ```bash
 npm run check
 npm run build
 ```
+
+CI (`.github/workflows/ci.yml`) runs `npm run check` on every pull request and
+every push to `main`. It needs no secrets.
 
 ---
 

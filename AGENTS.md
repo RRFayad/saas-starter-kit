@@ -149,7 +149,9 @@
 Run relevant checks after changes:
 
 ```bash
-# Lint, plus type checks for the Next.js app, the API, and @app/shared
+# Lint, Prettier, and type checks for the Next.js app, the API, and @app/shared
 npm run check
-npx prettier --check <changed-files>
 ```
+
+`.prettierignore` skips files that aren't ours (vendored skills, Drizzle
+migration snapshots, copied shadcn/ui and Velora components).
