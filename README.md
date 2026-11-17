@@ -103,11 +103,13 @@ frontend/src/          Next.js app (@app/frontend)
     user/              User queries
 
 backend/src/           Fastify API (@app/backend)
-  main.ts              App entry: setup, plugins, and route scopes
+  main.ts              App entry: starts the API
+  create-app.ts        Builds the app: plugins, hooks, and route scopes
   db.ts                Drizzle client
   auth/                Clerk authentication + subscription hooks
   dashboard/           Sample feature (route + controller)
   healthcheck/         Health check route
+  testing/             Test harness: test database, Clerk mock, HTTP client
 
 packages/shared/src/   Shared package (@app/shared)
   db/                  Drizzle schema, row types, and migrations
@@ -216,11 +218,12 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 # Optional: automatically apply a Stripe Coupon to Checkout demos
 STRIPE_DEMO_COUPON_ID=
 
+# Optional: shows the Clerk test-user hint on sign-up (demos on Clerk development keys)
+# true or false
+SIGN_UP_DEMO_MODE_ENABLED=
+
 # Optional: enables GitHub links on the landing page and in the SaaS shell
 NEXT_PUBLIC_GITHUB_URL=
-
-# Clerk webhook tunnel: created automatically by npm run dev (local)
-CLERK_WEBHOOK_RELAY_TOKEN=
 
 ```
 
@@ -263,6 +266,17 @@ is disabled, `/` redirects to the authenticated workspace.
 and subscription authorization. Set it to the same value in `frontend/.env.local` and
 `backend/.env`. When it is `false`, Stripe environment variables are not
 required.
+
+`SIGN_UP_DEMO_MODE_ENABLED` (optional, off unless `true`) prepares the sign-up page for
+demo visitors (see [Test users](#test-users-no-real-inbox)):
+
+- Fills in a fresh test email (`demo-<random>+clerk_test@example.com`) → each
+  visit is a new account.
+- Shows a hint above the form: no inbox needed, code `424242`.
+
+- Use it → public demos running on Clerk development keys (`pk_test_...`).
+- Never with production keys → test mode is off there, so the hint would be
+  wrong.
 
 ## 4. Install Dependencies
 
@@ -310,15 +324,16 @@ built from this kit don't clash. If port 5432 is taken, set `DB_PORT=5433` in a
 
 ### Production: hosted PostgreSQL
 
-Create a PostgreSQL database using Supabase or another hosted provider.
+Create a PostgreSQL database on Neon (suggested: bigger free tier) or another
+hosted provider.
 
-**If using Supabase**, go to **Connect → Connection string → Direct
-connection / URI** and copy the PostgreSQL connection string. Do not use the
-Supabase REST API URL.
+**If using Neon:** the app uses the **pooled** URL, migrations use the
+**direct** one, and both drop `&channel_binding=require` → see the
+[Deploy Guide](docs/deploy.md#2-database-neon).
 
 Next.js and the API must use the same database.
 
-Supabase is used only as PostgreSQL hosting in the reference project. The Starter Kit does not depend on Supabase Auth, Storage, or its SDK.
+The host only runs PostgreSQL: the Starter Kit doesn't use its auth, storage, or SDKs (Clerk owns auth, Drizzle and postgres-js own data access).
 
 Add the connection URL as `DATABASE_URL` to both `frontend/.env.local` and
 `backend/.env`.
@@ -396,6 +411,20 @@ https://<your-public-app-url>/api/webhooks/clerk
 
 Copy that endpoint's signing secret into the deployment's environment variables
 (for example, Vercel). Each endpoint has its own secret.
+
+### Test users (no real inbox)
+
+| Sign up with                            | Verification code | Email/SMS sent |
+| --------------------------------------- | ----------------- | -------------- |
+| `<name>+clerk_test@example.com`         | `424242`          | No             |
+| Phone `+1 (XXX) 555-0100` to `555-0199` | `424242`          | No             |
+
+- Needs **test mode** → on by default in development instances (`pk_test_...`);
+  check Configure > Settings > "Enable test mode". Off in production instances.
+- Each address → a new Clerk user → a new `users` row (through the webhook).
+- Fresh account → change the part before `+`, e.g. `demo2+clerk_test@example.com`.
+- Public demo → `SIGN_UP_DEMO_MODE_ENABLED=true` shows this on the sign-up page (see
+  [Feature Flags](#feature-flags)).
 
 ## 7. Configure Stripe (Optional - Required when `BILLING_ENABLED=true`)
 
@@ -590,6 +619,8 @@ the browser console while signed in to the app
 Before building product features, verify the complete SaaS foundation:
 
 - Sign up through Clerk
+  - No inbox needed: `demo+clerk_test@example.com`, code `424242` (see
+    [Test users](#test-users-no-real-inbox))
 - Confirm the user is synchronized to PostgreSQL
 - Select a subscription plan (if billing is enabled)
 - Complete Stripe Checkout
@@ -652,18 +683,34 @@ backend/src/<feature>/
   <feature>.service.ts      Business logic and database access (Drizzle)
 ```
 
-- **Route:** declares the path and attaches the request and response schemas
-  from `@app/shared/schemas`. The schemas validate every request and response
-  and generate the Swagger docs.
+- **Route:** declares the path and attaches the request schemas and the
+  success response schema from `@app/shared/schemas`. The schemas validate
+  every request and response and generate the Swagger docs. Routes don't list
+  error responses: every error has the same `{ detail }` body (see **Errors**
+  below), and the tests document which errors each route returns.
 - **Controller:** turns an HTTP request into a service call and the result
   into a response. It stays thin.
 - **Service:** holds the actual logic and queries, with no knowledge of HTTP,
   so it can be reused and tested on its own.
 
+**Errors:** services throw `HttpError` (`backend/src/errors.ts`) for expected
+failures, without `try/catch`:
+
+```ts
+throw new HttpError(404, "Source not found");
+```
+
+| Error                        | Response                                           |
+| ---------------------------- | -------------------------------------------------- |
+| `HttpError(status, detail)`  | `status` + `{ detail }`                            |
+| Request fails its Zod schema | `422` + `{ detail }`                               |
+| Unexpected error (bug, DB)   | logged → `500 { detail: "Internal Server Error" }` |
+| Unknown route                | `404 { detail: "Not found" }`                      |
+
 Small features can skip a layer: `healthcheck` only has a route, and the sample
 `dashboard` has a route and a controller.
 
-Then register the routes in the right scope in `backend/src/main.ts`:
+Then register the routes in the right scope in `backend/src/create-app.ts`:
 
 | Scope      | Hooks                                                              | For                             |
 | ---------- | ------------------------------------------------------------------ | ------------------------------- |
@@ -684,6 +731,29 @@ export * from "./<feature>.schema";
 
 Imports stay `@app/shared/schemas`. The frontend uses the inferred types
 (`z.infer`), so a contract change shows up as a type error on both sides.
+
+**Tests:** add `<feature>.test.ts` next to the feature. Tests call the real API
+over HTTP; only Clerk is mocked, by signing in with a header:
+
+```ts
+import { createUser, startApi } from "../testing/api";
+
+it("lists the user's notes", async () => {
+  await createUser("reader"); // the users row Clerk's webhook would create
+
+  const response = await api.as("reader").get("/notes"); // api = await startApi()
+
+  expect(response.status).toBe(200);
+});
+```
+
+- Database → `app_test` on the Docker Postgres: created and migrated
+  automatically, emptied before each test → **Docker must be running**.
+- Billing → off by default; turn it on per test with
+  `vi.stubEnv("BILLING_ENABLED", "true")` and seed a plan with
+  `createSubscription(user.id, "premium")`.
+- Run → `npm test` (also part of `npm run check`).
+- Examples → `backend/src/auth/*.test.ts`.
 
 The `dashboard` feature is a sample endpoint: use it as a template for your
 first real feature, then delete it (its folder, `schemas/dashboard.schema.ts`
@@ -725,8 +795,8 @@ The shell design stays neutral on purpose: re-skin a new SaaS through the theme 
 
 # Development Checks
 
-Run all checks (lint, Prettier, and a type check for the Next.js app, the API,
-and the shared package):
+Run all checks (lint, Prettier, a type check for the Next.js app, the API, and
+the shared package, and the API tests). The tests need Docker running:
 
 ```bash
 npm run check
@@ -734,25 +804,20 @@ npm run build
 ```
 
 CI (`.github/workflows/ci.yml`) runs `npm run check` on every pull request and
-every push to `main`. It needs no secrets.
+every push to `main`, with a Postgres service for the tests. It needs no
+secrets.
 
 ---
 
 # Production Notes
 
+**Deploying:** follow the [Deploy Guide](docs/deploy.md) → Neon, two Vercel
+projects, Clerk, and Stripe, plus how to ship later changes safely.
+
 When using the Starter Kit for a real production application:
 
 - Deploy the Next.js app and the API as separate services, each with its own
   environment variables.
-- On Vercel, the Next.js project uses Root Directory `frontend` and the API
-  project uses `backend`, both with "Include files outside the root directory"
-  enabled.
-- On Vercel, the API project uses the **Fastify** framework preset with Root
-  Directory `backend` and "Include files outside the root directory" enabled.
-  Vercel runs the backend's `npm run build`, an esbuild bundle that inlines
-  `@app/shared`, and serves it as the function entrypoint (`server.js`).
-- Update Frontend and Backend URL env vars.
-- Update Clerk and Stripe webhook endpoints.
 - Keep database credentials server-side.
 - Never expose `DATABASE_URL` through `NEXT_PUBLIC_*`.
 - Use production Clerk credentials and configure the production domain/webhook.

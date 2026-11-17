@@ -1,13 +1,16 @@
-import type { DashboardResponse } from "@app/shared/schemas";
-import type { FastifyRequest } from "fastify";
+import type { GetDashboardResponse } from "@app/shared/schemas";
+import type { FastifyReply, FastifyRequest } from "fastify";
+
+type GetDashboardIO = { Reply: GetDashboardResponse };
 
 // Sample endpoint: mock dashboard data plus the signed-in user's email, which
 // proves authentication and database access work end to end. Use it as the
 // template for real product routes, then delete it.
 export const getDashboardHandler = async (
-  request: FastifyRequest,
-): Promise<DashboardResponse> => {
-  return {
+  request: FastifyRequest<GetDashboardIO>,
+  reply: FastifyReply<GetDashboardIO>,
+) => {
+  return reply.send({
     user_email: request.user.email,
     metrics: [
       {
@@ -73,5 +76,5 @@ export const getDashboardHandler = async (
         amount: "+$12.00",
       },
     ],
-  };
+  });
 };

@@ -4,7 +4,7 @@ import { z } from "zod";
 
 // ---------- Errors ----------
 
-// Body of every error the API sends (401, 403, 404).
+// Body of every error the API sends (see backend/src/errors.ts).
 export const errorResponseSchema = z.object({
   detail: z.string(),
 });

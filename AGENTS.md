@@ -9,6 +9,14 @@
 - Inspect the existing implementation before changing code. Preserve established
   naming, structure, and patterns when they are already clear.
 
+## Git
+
+- Commit messages follow Conventional Commits: a type (`feat`, `fix`,
+  `refactor`, `test`, `docs`, `chore`, `ci`) and an optional scope, such as
+  `test(sources): add API tests for the Library`.
+- PR descriptions are objective: what changed and why, grouped by area; how it
+  was verified; the issues it closes (`Closes #n`).
+
 ## Architecture Boundaries
 
 - The repository is an npm workspaces monorepo: the Next.js app in
@@ -30,8 +38,9 @@
   Types inferred from a schema live next to it: row types (`User`,
   `Subscription`) in `db/schema.ts`, API types in each `schemas/` file; `types.ts`
   holds shared types that don't belong to a schema file.
-- PostgreSQL is the shared application database. Supabase, when used, is only
-  the database host. Do not introduce Supabase Auth or the Supabase SDK.
+- PostgreSQL is the shared application database. The hosted provider (Neon
+  in `docs/deploy.md`) is only the database host. Do not introduce its auth,
+  SDKs, or drivers; data access stays Drizzle + postgres-js.
 - Local development uses the PostgreSQL + pgvector container in
   `docker-compose.yml`; `npm run dev` starts it through `predev`.
 - Drizzle owns the schema and migrations in `packages/shared/src/db/`. Change
@@ -40,13 +49,27 @@
 - The API derives identity from the verified Clerk session token. Never trust a
   browser-supplied user ID for authenticated identity.
 
-## Frontend Conventions
+## Code Style
 
-- Use TypeScript arrow functions, not function declarations.
+These apply to every workspace.
+
+- Write functions as TypeScript arrow functions.
 - Name fixed module-level constants (lists, lookup tables) in
   `UPPER_SNAKE_CASE`, such as `SUBSCRIPTION_PLANS`. Objects built from
   environment variables or config, such as `featureFlags` or `routes`, stay
   `camelCase`.
+- Names carry the what; comments carry only what the code can't say: the why
+  or a non-obvious constraint. Prefer an explicit name (`getSourcesByUserId`)
+  to a comment explaining a vague one.
+- One step per line: in a pipeline, give each step its own named `const`
+  instead of nesting calls like `f(x, g(y))`.
+- Divide any file with several groups into sections with
+  `// ---------- Section ----------` dividers: generic files (`constants`,
+  `types`, `utils`) by topic, controllers by area, schema files by route with
+  `Types` last. Split a section into its own file once it can stand on its own.
+
+## Frontend Conventions
+
 - Prefer Server Components. Add client components only when client-side
   behavior is necessary.
 - Keep Next.js to API calls under `frontend/src/lib/backend/`, typed with the inferred
@@ -54,9 +77,6 @@
 - Application-owned Tailwind styles belong in a local `styles` object and must
   be wrapped with `tw()` so Prettier sorts the classes.
 - Use `cn()` only for runtime conditional class merging.
-- Group generic files (shared `constants`, `types`, `utils`) into sections with
-  `// ---------- Section ----------` dividers. Split a section into its own file
-  once it grows large.
 - Give user feedback with `showToast({ type, title, message })` from
   `frontend/src/components/toaster.tsx`; `type` is `success`, `warning`, or `error`.
   Call it directly in the client component that handles the action. Server
@@ -121,19 +141,45 @@
   `<feature>.route.ts` (path, Zod schemas, Swagger metadata),
   `<feature>.controller.ts` (request handling), and `<feature>.service.ts`
   (business logic and Drizzle queries). Small features can skip layers.
-- Register routes in the matching scope in `backend/src/main.ts`: public;
+- Name API schemas `<action><Thing>RequestBodySchema`,
+  `<action><Thing>ResponseSchema`, and `<thing>ParamsSchema`. Their inferred
+  types go in the file's `Types` section, named without `Schema`
+  (`getDashboardResponseSchema` → `GetDashboardResponse`).
+- Name controllers `<action><Thing>Handler`. Each declares one
+  `<Action><Thing>IO` type (`{ Params; Body; Reply }`, only the parts it uses)
+  and passes it to both `FastifyRequest` and `FastifyReply`, so
+  `reply.code(201).send(...)` stays typed. `dashboard.controller.ts` is the
+  template.
+- Services scoped to the signed-in user end in `ByUserId` and take the
+  `userId`, such as `deleteSourceByUserId(id, userId)`: the name shows the query
+  checks ownership.
+- Register routes in the matching scope in `backend/src/create-app.ts`: public;
   protected (`authenticate`, sets `request.user`); or subscribed
   (`requireSubscriptionPlan(...)`, sets `request.subscription`). Nest a scope
   for plan-gated routes.
 - Auth hooks run in `preHandler`, after `clerkPlugin` reads the token there; an
   `onRequest` hook sees no session.
-- Every route declares response schemas from `@app/shared/schemas`, including
-  `errorResponseSchema` for 401/403/404 on protected routes, and uses
-  `withTypeProvider<ZodTypeProvider>()`. Errors use the `{ detail }` body.
+- Every route declares its success response schema from `@app/shared/schemas`
+  and uses `withTypeProvider<ZodTypeProvider>()`. Routes don't list their error
+  codes: errors are thrown as `HttpError`, `errorHandler` sends them with the
+  `{ detail }` body, and the tests document which errors each route returns.
+- Services throw `HttpError(status, detail)` from `backend/src/errors.ts` for
+  expected failures; no `try/catch` to shape errors. `errorHandler` sends every
+  error as `{ detail }`: validation errors → 422, unexpected errors → logged,
+  then 500 without the internal message. Unknown routes → 404.
 - Fastify treats `/path` and `/path/` as different routes; call routes without a
   trailing slash.
 - CORS accepts only `FRONTEND_URL`; keep it aligned with the Next.js app URL.
-- The API entry is `backend/src/main.ts`. Vercel deploys the esbuild bundle
+- Tests sit next to their feature (`backend/src/<feature>/<feature>.test.ts`)
+  and use the harness in `backend/src/testing/`: `startApi()` runs the real app
+  on a free port, `api.as(clerkId)` calls it over HTTP with axios, and
+  `createUser` / `createSubscription` seed rows. Clerk is the only mock. They
+  run against `app_test` on the Docker Postgres (created and migrated
+  automatically, truncated before each test), so Docker must be running.
+  `TEST_DATABASE_URL` overrides it. Billing is off; turn it on per test with
+  `vi.stubEnv("BILLING_ENABLED", "true")`.
+- `backend/src/create-app.ts` builds the app (plugins, hooks, route scopes);
+  the entry `backend/src/main.ts` only starts it. Vercel deploys the esbuild bundle
   from `npm run build` (`backend/server.js`), which inlines `@app/shared`
   because Node can't load its TypeScript source from `node_modules`. Vercel
   picks the entrypoint by file name, so never add `backend/src/app`, `backend/src/index`,
@@ -149,7 +195,8 @@
 Run relevant checks after changes:
 
 ```bash
-# Lint, Prettier, and type checks for the Next.js app, the API, and @app/shared
+# Lint, Prettier, type checks (Next.js app, API, @app/shared), and API tests
+# (needs Docker running)
 npm run check
 ```
 
