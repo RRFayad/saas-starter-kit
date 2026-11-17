@@ -1,13 +1,3 @@
-<!-- BEGIN:nextjs-agent-rules -->
-
-# This is NOT the Next.js you know
-
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
-
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
-
-<!-- END:nextjs-agent-rules -->
-
 # Project Guidelines
 
 ## Scope and Workflow
@@ -21,9 +11,13 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Architecture Boundaries
 
-- The repository is an npm workspaces monorepo: the Next.js app at the root,
-  the Fastify API in `backend/` (`@app/backend`), and the shared package in
-  `packages/shared/` (`@app/shared`).
+- The repository is an npm workspaces monorepo: the Next.js app in
+  `frontend/` (`@app/frontend`), the Fastify API in `backend/`
+  (`@app/backend`), and the shared package in `packages/shared/`
+  (`@app/shared`).
+- The Next.js app (`frontend/`) uses a Next.js version with breaking changes
+  from common training data. Read `frontend/AGENTS.md` and the guides in
+  `node_modules/next/dist/docs/` before writing Next.js code.
 - Next.js owns UI, Clerk authentication, Clerk and Stripe webhooks, billing,
   and SaaS/account concerns.
 - The API (Fastify) owns product/domain APIs and future product logic, such as
@@ -55,7 +49,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
   `camelCase`.
 - Prefer Server Components. Add client components only when client-side
   behavior is necessary.
-- Keep Next.js to API calls under `src/lib/backend/`, typed with the inferred
+- Keep Next.js to API calls under `frontend/src/lib/backend/`, typed with the inferred
   types from `@app/shared/schemas`.
 - Application-owned Tailwind styles belong in a local `styles` object and must
   be wrapped with `tw()` so Prettier sorts the classes.
@@ -64,15 +58,15 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
   `// ---------- Section ----------` dividers. Split a section into its own file
   once it grows large.
 - Give user feedback with `showToast({ type, title, message })` from
-  `src/components/toaster.tsx`; `type` is `success`, `warning`, or `error`.
+  `frontend/src/components/toaster.tsx`; `type` is `success`, `warning`, or `error`.
   Call it directly in the client component that handles the action. Server
   actions return a result, and the calling client component turns it into a
   toast.
-- Do not refactor copied shadcn/ui components in `src/components/ui/` or Velora
-  components in `src/components/velora/` into the application styling pattern.
-- Keep marketing components in `src/components/marketing/`, subscribed-app
-  components in `src/components/subscribed/`, and theme components in
-  `src/components/theme/`.
+- Do not refactor copied shadcn/ui components in `frontend/src/components/ui/` or Velora
+  components in `frontend/src/components/velora/` into the application styling pattern.
+- Keep marketing components in `frontend/src/components/marketing/`, subscribed-app
+  components in `frontend/src/components/subscribed/`, and theme components in
+  `frontend/src/components/theme/`.
 
 ## Implementing Designs
 
@@ -80,15 +74,15 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
   [App Shell canvas](https://claude.ai/artifact/HWhacGtes2kTC143kN4aUk).
   Implement a design's page content inside the existing shell and change the
   shell only when the request asks for it.
-- A new subscribed page lives under `src/app/(subscribed)/` and is wired in
-  three places: its path in `src/lib/routes.ts`, its nav item in
-  `src/components/app-sidebar.tsx`, and its breadcrumb in `routeContext` in
-  `src/components/subscribed/app-header.tsx`.
+- A new subscribed page lives under `frontend/src/app/(subscribed)/` and is wired in
+  three places: its path in `frontend/src/lib/routes.ts`, its nav item in
+  `frontend/src/components/app-sidebar.tsx`, and its breadcrumb in `routeContext` in
+  `frontend/src/components/subscribed/app-header.tsx`.
 - Redirects and links into the app use `routes.appHome`. Only the Overview
   page's own nav item and breadcrumb use `routes.workspace.overview`.
 - Pages follow the existing page pattern: a `mx-auto w-full max-w-7xl`
   container, `PageHeader`, then white cards styled like the ones in
-  `src/components/subscribed/billing.tsx`.
+  `frontend/src/components/subscribed/billing.tsx`.
 - Translate design colors, radii, and fonts to theme tokens (`bg-card`,
   `text-muted-foreground`, `border`, `bg-primary`, `rounded-xl`) so light and
   dark themes both follow.
@@ -100,7 +94,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
   `subscriptions`; authorization reads local subscription state rather than
   querying Stripe on every request.
 - Server-side Next.js pages use the subscription helpers in
-  `src/lib/subscription/`. API routes get the same check from the subscribed
+  `frontend/src/lib/subscription/`. API routes get the same check from the subscribed
   scope (`requireSubscriptionPlan(...)`). Both read the plan rules from
   `@app/shared/constants`.
 - Keep Stripe SDK use, customer creation, Checkout Session creation, and
@@ -109,7 +103,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
   the Stripe CLI, started by `npm run dev` through `scripts/dev-stripe.mjs`
   (only when `BILLING_ENABLED=true`). It uses the project's
   `STRIPE_SECRET_KEY`, never the global `stripe login`, and syncs
-  `STRIPE_WEBHOOK_SECRET` in `.env.local`. Never use a dashboard destination
+  `STRIPE_WEBHOOK_SECRET` in `frontend/.env.local`. Never use a dashboard destination
   pointing at a tunnel; the dashboard destination is for production only. When the Stripe webhook route handles a new event type, add
   it to the `stripe:listen` script's `--events` list and to the production
   destination.
@@ -142,8 +136,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - The API entry is `backend/src/main.ts`. Vercel deploys the esbuild bundle
   from `npm run build` (`backend/server.js`), which inlines `@app/shared`
   because Node can't load its TypeScript source from `node_modules`. Vercel
-  picks the entrypoint by file name, so never add `src/app`, `src/index`, or
-  `src/server` files to the backend: Vercel would run them unbundled.
+  picks the entrypoint by file name, so never add `backend/src/app`, `backend/src/index`,
+  or `backend/src/server` files: Vercel would run them unbundled.
 - The root `package.json` `overrides` pins `@fastify/static` (used by Swagger
   UI) to 10.1.3. Newer versions `require()` the ESM-only `content-disposition`
   v3, which Vercel's runtime loader rejects (`ERR_REQUIRE_ESM`, every route

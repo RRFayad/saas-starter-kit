@@ -2,8 +2,8 @@ import type { Config } from "drizzle-kit";
 import dotenv from "dotenv";
 import { getEnvVar } from "./src/utils";
 
-// Runs from packages/shared; the env file lives at the repo root.
-dotenv.config({ path: "../../.env.local" });
+// Runs from packages/shared; the env file lives in the Next.js app.
+dotenv.config({ path: "../../frontend/.env.local" });
 
 export default {
   schema: "./src/db/schema.ts",

@@ -1,5 +1,5 @@
 // Runs Clerk's webhook tunnel during `npm run dev`, scoped to this project:
-// - Uses this project's relay token (CLERK_WEBHOOK_RELAY_TOKEN in .env.local),
+// - Uses this project's relay token (CLERK_WEBHOOK_RELAY_TOKEN in frontend/.env.local),
 //   so its inbox URL never changes. No ngrok, no Clerk login.
 // - Generates and saves the token on the first run.
 // - Forwards deliveries to FORWARD_TO: change it if the webhook route moves.
@@ -10,7 +10,7 @@
 import { execFileSync, spawn } from "node:child_process";
 import { appendFileSync } from "node:fs";
 
-const ENV_FILE = ".env.local";
+const ENV_FILE = "frontend/.env.local";
 const CLERK_CLI = "node_modules/.bin/clerk";
 const FORWARD_TO = "http://localhost:3000/api/webhooks/clerk";
 

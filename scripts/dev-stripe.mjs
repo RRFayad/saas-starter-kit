@@ -1,13 +1,13 @@
 // Runs the Stripe webhook listener during `npm run dev`, scoped to this project:
-// - Skipped when BILLING_ENABLED isn't "true" in .env.local.
+// - Skipped when BILLING_ENABLED isn't "true" in frontend/.env.local.
 // - Uses this project's STRIPE_SECRET_KEY (as STRIPE_API_KEY), never the
 //   machine-wide `stripe login`.
-// - Keeps STRIPE_WEBHOOK_SECRET in .env.local in sync with the listener's
+// - Keeps STRIPE_WEBHOOK_SECRET in frontend/.env.local in sync with the listener's
 //   signing secret (Next.js reloads .env.local automatically).
 import { execFileSync, spawn } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 
-const ENV_FILE = ".env.local";
+const ENV_FILE = "frontend/.env.local";
 
 const getListenerSecret = (apiKey) =>
   execFileSync("stripe", ["listen", "--print-secret"], {
