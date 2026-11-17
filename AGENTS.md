@@ -29,18 +29,20 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - The API (Fastify) owns product/domain APIs and future product logic, such as
   AI, RAG, agents, and streaming.
 - `@app/shared` holds what both apps must agree on: the Drizzle schema and
-  migrations, the API contract (Zod schemas in `schemas.ts`), and shared
+  migrations, the API contract (Zod schemas in `schemas/`, one file per
+  feature), and shared
   constants, types, and utils. Each app reads its own environment variables;
   configuration objects such as `featureFlags` stay in their app.
   Types inferred from a schema live next to it: row types (`User`,
-  `Subscription`) in `db/schema.ts`, API types in `schemas.ts`; `types.ts`
+  `Subscription`) in `db/schema.ts`, API types in each `schemas/` file; `types.ts`
   holds shared types that don't belong to a schema file.
 - PostgreSQL is the shared application database. Supabase, when used, is only
   the database host. Do not introduce Supabase Auth or the Supabase SDK.
 - Local development uses the PostgreSQL + pgvector container in
   `docker-compose.yml`; `npm run dev` starts it through `predev`.
 - Drizzle owns the schema and migrations in `packages/shared/src/db/`. Change
-  the schema there and run `npm run db:generate`.
+  the schema there and run `npm run db:generate`. `npm run db:studio` opens
+  Drizzle Studio on the local database.
 - The API derives identity from the verified Clerk session token. Never trust a
   browser-supplied user ID for authenticated identity.
 
@@ -104,9 +106,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Keep Stripe SDK use, customer creation, Checkout Session creation, and
   Customer Portal Session creation server-only.
 - Each project uses its own Stripe sandbox. Local Stripe webhooks come from
-  the Stripe CLI (`stripe listen`, started by `npm run dev`), never from a
-  dashboard destination pointing at a tunnel; the dashboard destination is for
-  production only. When the Stripe webhook route handles a new event type, add
+  the Stripe CLI, started by `npm run dev` through `scripts/dev-stripe.mjs`
+  (only when `BILLING_ENABLED=true`). It uses the project's
+  `STRIPE_SECRET_KEY`, never the global `stripe login`, and syncs
+  `STRIPE_WEBHOOK_SECRET` in `.env.local`. Never use a dashboard destination
+  pointing at a tunnel; the dashboard destination is for production only. When the Stripe webhook route handles a new event type, add
   it to the `stripe:listen` script's `--events` list and to the production
   destination.
 
@@ -115,8 +119,10 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Install packages from the repo root into a workspace, such as
   `npm install <package> -w @app/backend`. A `backend/package-lock.json` or
   `backend/node_modules/` means something ran outside the workspace.
-- `npm run dev` at the root starts the database, Next.js, the API, and the
-  Stripe listener together. The API reads `backend/.env`.
+- `npm run dev` at the root starts the database, Next.js, the API, the Stripe
+  listener (`scripts/dev-stripe.mjs`), and Clerk's webhook tunnel
+  (`scripts/dev-clerk.mjs`, using the `clerk` dev dependency and
+  `CLERK_WEBHOOK_RELAY_TOKEN`). The API reads `backend/.env`.
 - Give each feature a folder in `backend/src/<feature>/` with
   `<feature>.route.ts` (path, Zod schemas, Swagger metadata),
   `<feature>.controller.ts` (request handling), and `<feature>.service.ts`

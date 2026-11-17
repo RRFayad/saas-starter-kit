@@ -111,7 +111,10 @@ backend/src/           Fastify API (@app/backend)
 
 packages/shared/src/   Shared package (@app/shared)
   db/                  Drizzle schema, row types, and migrations
-  schemas.ts           Zod API schemas and their types (the API contract)
+  schemas/             Zod API schemas and their types (the API contract)
+    index.ts           Re-exports every schema file
+    common.schema.ts   Error and system schemas
+    <feature>.schema.ts  One file per feature
   constants.ts         Shared constants
   types.ts             Shared types not tied to a schema
   utils.ts             Shared helpers
@@ -210,6 +213,9 @@ STRIPE_DEMO_COUPON_ID=
 
 # Optional: enables GitHub links on the landing page and in the SaaS shell
 NEXT_PUBLIC_GITHUB_URL=
+
+# Clerk webhook tunnel: created automatically by npm run dev (local)
+CLERK_WEBHOOK_RELAY_TOKEN=
 
 ```
 
@@ -346,19 +352,36 @@ user.updated
 user.deleted
 ```
 
-**Local development:** Clerk can't reach `localhost`, so expose Next.js with an
-HTTPS tunnel such as ngrok:
+**Local development:** Clerk can't reach `localhost` → `npm run dev` runs
+Clerk's own webhook tunnel (`[clerk]`, `scripts/dev-clerk.mjs`):
+
+- Uses the project's Clerk CLI (`clerk` dev dependency) → no tunnel.
+- **Relay URL** → Clerk's public inbox for this project, e.g.
+  `https://webhooks.clerk.com/in/c_AbC123xYz9/`. `[clerk]` forwards its
+  deliveries to `localhost:3000/api/webhooks/clerk`.
+- **Relay token** → the ID at the end of that URL (`c_AbC123xYz9`), saved in
+  `.env.local` as `CLERK_WEBHOOK_RELAY_TOKEN`. Created once, never changes.
+
+Get your relay URL (creates the token on the first run):
 
 ```bash
-ngrok http 3000
+npm run clerk:webhook-url
+# → Clerk webhook endpoint URL: https://webhooks.clerk.com/in/c_.../
 ```
 
-```text
-https://<your-ngrok-url>/api/webhooks/clerk
-```
+`npm run dev` also prints it at startup (`Clerk webhook relay: …`).
 
-Copy the endpoint's signing secret into `.env.local` as
-`CLERK_WEBHOOK_SIGNING_SECRET`.
+One-time setup, in your **local** Clerk app (Configure > Webhooks > Add
+Endpoint):
+
+1. Endpoint URL → your relay URL (never `localhost`).
+2. Subscribe to the events listed above.
+3. Copy the endpoint's signing secret into `.env.local` as
+   `CLERK_WEBHOOK_SIGNING_SECRET`.
+
+To forward to a different local route, edit `FORWARD_TO` in
+`scripts/dev-clerk.mjs`. Keep the Clerk endpoint as the bare relay URL: the
+relay ignores extra paths.
 
 **Production:**
 
@@ -426,20 +449,17 @@ pages stay gated until the webhook works.
 
 #### Local development: Stripe CLI
 
-Log in to the project's sandbox and get the local signing secret:
+`npm run dev` runs the listener (`scripts/dev-stripe.mjs`), scoped to this
+project:
 
-```bash
-stripe login
-npm run stripe:listen
-```
+- Only when `BILLING_ENABLED=true` → otherwise skipped.
+- Uses this project's `STRIPE_SECRET_KEY` → no `stripe login`, nothing shared
+  between projects.
+- Syncs `STRIPE_WEBHOOK_SECRET` in `.env.local` with the listener's signing
+  secret on every start → no manual copying.
 
-`stripe listen` prints a webhook signing secret (`whsec_...`). Add it to
-`.env.local` as `STRIPE_WEBHOOK_SECRET`, then stop the command. The secret
-stays the same across runs on the same machine.
-
-From then on, `npm run dev` runs the listener next to Next.js, so you don't
-start it yourself. Do not create a dashboard destination pointing at a tunnel
-URL: it duplicates deliveries and needs its own secret.
+Do not create a dashboard destination pointing at a tunnel URL: it duplicates
+deliveries and needs its own secret.
 
 The `stripe:listen` script forwards the same five subscription events that the
 production destination subscribes to (listed below). When the webhook route
@@ -450,7 +470,7 @@ To explore which events Stripe sends for a flow, run the listener with every
 event instead (the route logs `Unhandled Stripe event` for the ones it ignores):
 
 ```bash
-stripe listen --all-snapshot --forward-to localhost:3000/api/webhooks/stripe
+STRIPE_API_KEY=<your STRIPE_SECRET_KEY> stripe listen --all-snapshot --forward-to localhost:3000/api/webhooks/stripe
 ```
 
 #### Production : Webhooks Dashboard destination
@@ -528,6 +548,9 @@ npm run db:generate
 npm run db:migrate
 ```
 
+To browse the database: `npm run db:studio` → https://local.drizzle.studio
+(local database must be running).
+
 Commit generated migrations with the schema change.
 
 ## 11. Run Locally
@@ -539,7 +562,8 @@ npm run dev
 ```
 
 It starts the local database container, then runs Next.js (`[web]`), the API
-(`[api]`), and the Stripe webhook listener (`[stripe]`) side by side, with each
+(`[api]`), the Stripe webhook listener (`[stripe]`, when billing is enabled),
+and the Clerk webhook tunnel (`[clerk]`) side by side, with each
 process's output labeled. `Ctrl+C` stops all of them.
 
 Services:
@@ -645,14 +669,20 @@ Then register the routes in the right scope in `backend/src/main.ts`:
 For a plan-gated feature, nest another scope with
 `requireSubscriptionPlan("premium")` (or `"all_in"`).
 
-Define the request and response schemas in
-`packages/shared/src/schemas.ts`. The frontend uses the inferred types
-(`z.infer`) for the data it receives, so a contract change shows up as a type
-error on both sides.
+Define the feature's request and response schemas in
+`packages/shared/src/schemas/<feature>.schema.ts`, and add one line to
+`schemas/index.ts`:
+
+```ts
+export * from "./<feature>.schema";
+```
+
+Imports stay `@app/shared/schemas`. The frontend uses the inferred types
+(`z.infer`), so a contract change shows up as a type error on both sides.
 
 The `dashboard` feature is a sample endpoint: use it as a template for your
-first real feature, then delete it (its folder, its schema in `schemas.ts`, and
-the Overview page that renders it).
+first real feature, then delete it (its folder, `schemas/dashboard.schema.ts`
+and its line in `schemas/index.ts`, and the Overview page that renders it).
 
 ## Database Ownership
 
