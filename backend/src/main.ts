@@ -4,6 +4,7 @@ import { getEnvVar } from "@app/shared/utils";
 import { authenticate } from "./auth/authenticate";
 import { requireSubscriptionPlan } from "./auth/subscription";
 import { dashboardRoutes } from "./dashboard/dashboard.route";
+import { errorHandler } from "./errors";
 import { healthcheckRoutes } from "./healthcheck/healthcheck.route";
 import { clerkPlugin } from "@clerk/fastify";
 import type { Subscription, User } from "@app/shared/db/schema";
@@ -32,6 +33,12 @@ app.decorateRequest("subscription");
 
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
+
+// Every error response, has the { detail } body.
+app.setErrorHandler(errorHandler);
+app.setNotFoundHandler((_request, reply) =>
+  reply.code(404).send({ detail: "Not found" }),
+);
 
 app.register(fastifySwagger, {
   openapi: {

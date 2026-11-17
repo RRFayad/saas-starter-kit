@@ -660,6 +660,20 @@ backend/src/<feature>/
 - **Service:** holds the actual logic and queries, with no knowledge of HTTP,
   so it can be reused and tested on its own.
 
+**Errors:** services throw `HttpError` (`backend/src/errors.ts`) for expected
+failures, without `try/catch`:
+
+```ts
+throw new HttpError(404, "Source not found");
+```
+
+| Error                        | Response                                           |
+| ---------------------------- | -------------------------------------------------- |
+| `HttpError(status, detail)`  | `status` + `{ detail }`                            |
+| Request fails its Zod schema | `422` + `{ detail }`                               |
+| Unexpected error (bug, DB)   | logged → `500 { detail: "Internal Server Error" }` |
+| Unknown route                | `404 { detail: "Not found" }`                      |
+
 Small features can skip a layer: `healthcheck` only has a route, and the sample
 `dashboard` has a route and a controller.
 

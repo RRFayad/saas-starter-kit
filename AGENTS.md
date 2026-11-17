@@ -130,6 +130,10 @@
 - Every route declares response schemas from `@app/shared/schemas`, including
   `errorResponseSchema` for 401/403/404 on protected routes, and uses
   `withTypeProvider<ZodTypeProvider>()`. Errors use the `{ detail }` body.
+- Services throw `HttpError(status, detail)` from `backend/src/errors.ts` for
+  expected failures; no `try/catch` to shape errors. `errorHandler` sends every
+  error as `{ detail }`: validation errors → 422, unexpected errors → logged,
+  then 500 without the internal message. Unknown routes → 404.
 - Fastify treats `/path` and `/path/` as different routes; call routes without a
   trailing slash.
 - CORS accepts only `FRONTEND_URL`; keep it aligned with the Next.js app URL.
