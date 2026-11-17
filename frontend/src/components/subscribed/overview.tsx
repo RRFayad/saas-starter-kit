@@ -9,11 +9,11 @@ import {
 
 import { PageHeader } from "@/components/subscribed/page-header";
 import { BackendHealthButton } from "@/components/subscribed/backend-health-button";
-import type { DashboardResponse } from "@app/shared/schemas";
+import type { GetDashboardResponse } from "@app/shared/schemas";
 import { tw } from "@/lib/utils";
 
 type OverviewProps = {
-  dashboardData: DashboardResponse | null;
+  dashboardData: GetDashboardResponse | null;
 };
 
 const metricIcons = {

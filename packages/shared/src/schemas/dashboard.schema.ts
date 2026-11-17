@@ -2,6 +2,8 @@ import { z } from "zod";
 
 // Sample endpoint: delete this file with the dashboard feature.
 
+// ---------- GET /dashboard ----------
+
 export const dashboardMetricIconSchema = z.enum([
   "revenue",
   "customers",
@@ -9,7 +11,7 @@ export const dashboardMetricIconSchema = z.enum([
   "refunds",
 ]);
 
-export const dashboardResponseSchema = z.object({
+export const getDashboardResponseSchema = z.object({
   user_email: z.string(),
   metrics: z.array(
     z.object({
@@ -38,5 +40,7 @@ export const dashboardResponseSchema = z.object({
   ),
 });
 
+// ---------- Types ----------
+
 export type DashboardMetricIcon = z.infer<typeof dashboardMetricIconSchema>;
-export type DashboardResponse = z.infer<typeof dashboardResponseSchema>;
+export type GetDashboardResponse = z.infer<typeof getDashboardResponseSchema>;

@@ -1,4 +1,4 @@
-import { dashboardResponseSchema } from "@app/shared/schemas";
+import { getDashboardResponseSchema } from "@app/shared/schemas";
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 
@@ -12,7 +12,7 @@ export const dashboardRoutes = async (app: FastifyInstance) => {
         tags: ["dashboard"],
         summary: "Sample dashboard data for the signed-in user",
         security: [{ bearerAuth: [] }],
-        response: { 200: dashboardResponseSchema },
+        response: { 200: getDashboardResponseSchema },
       },
     },
     getDashboardHandler,

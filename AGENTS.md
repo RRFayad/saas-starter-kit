@@ -9,6 +9,14 @@
 - Inspect the existing implementation before changing code. Preserve established
   naming, structure, and patterns when they are already clear.
 
+## Git
+
+- Commit messages follow Conventional Commits: a type (`feat`, `fix`,
+  `refactor`, `test`, `docs`, `chore`, `ci`) and an optional scope, such as
+  `test(sources): add API tests for the Library`.
+- PR descriptions are objective: what changed and why, grouped by area; how it
+  was verified; the issues it closes (`Closes #n`).
+
 ## Architecture Boundaries
 
 - The repository is an npm workspaces monorepo: the Next.js app in
@@ -41,13 +49,27 @@
 - The API derives identity from the verified Clerk session token. Never trust a
   browser-supplied user ID for authenticated identity.
 
-## Frontend Conventions
+## Code Style
 
-- Use TypeScript arrow functions, not function declarations.
+These apply to every workspace.
+
+- Write functions as TypeScript arrow functions.
 - Name fixed module-level constants (lists, lookup tables) in
   `UPPER_SNAKE_CASE`, such as `SUBSCRIPTION_PLANS`. Objects built from
   environment variables or config, such as `featureFlags` or `routes`, stay
   `camelCase`.
+- Names carry the what; comments carry only what the code can't say: the why
+  or a non-obvious constraint. Prefer an explicit name (`getSourcesByUserId`)
+  to a comment explaining a vague one.
+- One step per line: in a pipeline, give each step its own named `const`
+  instead of nesting calls like `f(x, g(y))`.
+- Divide any file with several groups into sections with
+  `// ---------- Section ----------` dividers: generic files (`constants`,
+  `types`, `utils`) by topic, controllers by area, schema files by route with
+  `Types` last. Split a section into its own file once it can stand on its own.
+
+## Frontend Conventions
+
 - Prefer Server Components. Add client components only when client-side
   behavior is necessary.
 - Keep Next.js to API calls under `frontend/src/lib/backend/`, typed with the inferred
@@ -55,9 +77,6 @@
 - Application-owned Tailwind styles belong in a local `styles` object and must
   be wrapped with `tw()` so Prettier sorts the classes.
 - Use `cn()` only for runtime conditional class merging.
-- Group generic files (shared `constants`, `types`, `utils`) into sections with
-  `// ---------- Section ----------` dividers. Split a section into its own file
-  once it grows large.
 - Give user feedback with `showToast({ type, title, message })` from
   `frontend/src/components/toaster.tsx`; `type` is `success`, `warning`, or `error`.
   Call it directly in the client component that handles the action. Server
@@ -122,6 +141,18 @@
   `<feature>.route.ts` (path, Zod schemas, Swagger metadata),
   `<feature>.controller.ts` (request handling), and `<feature>.service.ts`
   (business logic and Drizzle queries). Small features can skip layers.
+- Name API schemas `<action><Thing>RequestBodySchema`,
+  `<action><Thing>ResponseSchema`, and `<thing>ParamsSchema`. Their inferred
+  types go in the file's `Types` section, named without `Schema`
+  (`getDashboardResponseSchema` → `GetDashboardResponse`).
+- Name controllers `<action><Thing>Handler`. Each declares one
+  `<Action><Thing>IO` type (`{ Params; Body; Reply }`, only the parts it uses)
+  and passes it to both `FastifyRequest` and `FastifyReply`, so
+  `reply.code(201).send(...)` stays typed. `dashboard.controller.ts` is the
+  template.
+- Services scoped to the signed-in user end in `ByUserId` and take the
+  `userId`, such as `deleteSourceByUserId(id, userId)`: the name shows the query
+  checks ownership.
 - Register routes in the matching scope in `backend/src/create-app.ts`: public;
   protected (`authenticate`, sets `request.user`); or subscribed
   (`requireSubscriptionPlan(...)`, sets `request.subscription`). Nest a scope
