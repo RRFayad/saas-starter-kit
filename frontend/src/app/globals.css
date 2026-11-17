@@ -201,6 +201,11 @@
   }
 }
 
+button:disabled {
+  pointer-events: auto;
+  cursor: not-allowed;
+}
+
 @keyframes marquee {
   from {
     transform: translateX(0);

@@ -11,6 +11,15 @@ export class HttpError extends Error {
   }
 }
 
+const MAX_LOGGED_LENGTH = 1000;
+
+// Make an error log shorter to be properly displayed on Vercel
+const toLoggedError = (error: Error) => ({
+  message: error.message.slice(0, MAX_LOGGED_LENGTH), // its start: what failed
+  cause: error.cause && String(error.cause).slice(0, MAX_LOGGED_LENGTH), // the database's own reason
+  stack: error.stack?.slice(-MAX_LOGGED_LENGTH), // its end: where in the code
+});
+
 // Every error becomes { detail }; 500s are logged and never leak their message.
 export const errorHandler = (
   error: FastifyError,
@@ -20,7 +29,7 @@ export const errorHandler = (
   const status = hasZodFastifySchemaValidationErrors(error)
     ? 422
     : (error.statusCode ?? 500);
-  if (status >= 500) request.log.error(error);
+  if (status >= 500) request.log.error({ err: toLoggedError(error) });
 
   return reply
     .code(status)
