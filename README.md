@@ -324,15 +324,16 @@ built from this kit don't clash. If port 5432 is taken, set `DB_PORT=5433` in a
 
 ### Production: hosted PostgreSQL
 
-Create a PostgreSQL database using Supabase or another hosted provider.
+Create a PostgreSQL database on Neon (suggested: bigger free tier) or another
+hosted provider.
 
-**If using Supabase**, go to **Connect → Connection string → Direct
-connection / URI** and copy the PostgreSQL connection string. Do not use the
-Supabase REST API URL.
+**If using Neon:** the app uses the **pooled** URL, migrations use the
+**direct** one, and both drop `&channel_binding=require` → see the
+[Deploy Guide](docs/deploy.md#2-database-neon).
 
 Next.js and the API must use the same database.
 
-Supabase is used only as PostgreSQL hosting in the reference project. The Starter Kit does not depend on Supabase Auth, Storage, or its SDK.
+The host only runs PostgreSQL: the Starter Kit doesn't use its auth, storage, or SDKs (Clerk owns auth, Drizzle and postgres-js own data access).
 
 Add the connection URL as `DATABASE_URL` to both `frontend/.env.local` and
 `backend/.env`.
@@ -810,19 +811,13 @@ secrets.
 
 # Production Notes
 
+**Deploying:** follow the [Deploy Guide](docs/deploy.md) → Neon, two Vercel
+projects, Clerk, and Stripe, plus how to ship later changes safely.
+
 When using the Starter Kit for a real production application:
 
 - Deploy the Next.js app and the API as separate services, each with its own
   environment variables.
-- On Vercel, the Next.js project uses Root Directory `frontend` and the API
-  project uses `backend`, both with "Include files outside the root directory"
-  enabled.
-- On Vercel, the API project uses the **Fastify** framework preset with Root
-  Directory `backend` and "Include files outside the root directory" enabled.
-  Vercel runs the backend's `npm run build`, an esbuild bundle that inlines
-  `@app/shared`, and serves it as the function entrypoint (`server.js`).
-- Update Frontend and Backend URL env vars.
-- Update Clerk and Stripe webhook endpoints.
 - Keep database credentials server-side.
 - Never expose `DATABASE_URL` through `NEXT_PUBLIC_*`.
 - Use production Clerk credentials and configure the production domain/webhook.

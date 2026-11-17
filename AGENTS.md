@@ -30,8 +30,9 @@
   Types inferred from a schema live next to it: row types (`User`,
   `Subscription`) in `db/schema.ts`, API types in each `schemas/` file; `types.ts`
   holds shared types that don't belong to a schema file.
-- PostgreSQL is the shared application database. Supabase, when used, is only
-  the database host. Do not introduce Supabase Auth or the Supabase SDK.
+- PostgreSQL is the shared application database. The hosted provider (Neon
+  in `docs/deploy.md`) is only the database host. Do not introduce its auth,
+  SDKs, or drivers; data access stays Drizzle + postgres-js.
 - Local development uses the PostgreSQL + pgvector container in
   `docker-compose.yml`; `npm run dev` starts it through `predev`.
 - Drizzle owns the schema and migrations in `packages/shared/src/db/`. Change
